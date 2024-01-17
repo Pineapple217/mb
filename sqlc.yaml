@@ -1,0 +1,20 @@
+version: "2"
+cloud:
+  organization: ""
+  project: ""
+  hostname: ""
+sql:
+  - engine: "sqlite"
+    queries: "database/query.sql"
+    schema: "database/schema.sql"
+    database:
+      uri: "file:database.db"
+    gen:
+      go:
+        package: "database"
+        out: "database"
+overrides:
+  go: null
+plugins: []
+rules: []
+options: {}

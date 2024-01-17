@@ -1,0 +1,318 @@
+@font-face {
+    font-family: 'Terminus (TTF)';
+    src: url('/static/fonts/TerminusTTF.woff2') format('woff2');
+}
+
+html, code, input, textarea {
+    font-family: 'Terminus (TTF)';
+    font-size: 16px;
+}
+
+body {
+    background-color: #1d1e1e;
+    max-width: 40rem;
+    word-wrap: break-word;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1 {
+    font-size: 2em;
+}
+
+p, label, input, textarea, details, ul, li, h1, h2, h3, h4, h5, h6 {
+    color: #938C81;
+}
+
+article {
+    background-color: rgb(33, 31, 32);
+    border: solid 2px rgb(130, 122, 111);
+    margin: 1em;
+    padding: 1em;
+}
+
+.lat {
+    border-color: #F7208B;
+    border-style: dotted;
+
+}
+
+article:hover {
+    border-color: #923B2C;
+    border-style: dotted;
+}
+
+header {
+    color: grey;
+    padding: 1em;
+}
+
+img, video {
+    max-width: 100%;
+    max-height: 500px;
+    height: auto;
+}
+
+br {
+    display: block;
+    margin-top: 0.5em;
+}
+
+.cnt {
+    display: flex;
+    justify-content: space-between;
+    color: #b3b8c3;
+}
+
+.cc {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+a, .s {
+    color: #FF0000;
+    display: inline;
+}
+
+label strong, .cl {
+    color: #FF8B8B;
+}
+
+label, summary {
+    cursor: pointer;
+}
+
+label {
+    white-space: nowrap;
+}
+
+input[type=checkbox] {
+    word-break: keep-all;
+}
+
+input[type=checkbox]+label:before {
+    content: '[ ]';
+}
+
+input[type=checkbox]:checked+label:before {
+    content: '[x]';
+}
+
+input[type=checkbox] {
+    display: none;
+}
+
+input[type=search], input[type=text], textarea {
+    border: solid 2px #923B2C;
+    background-color: inherit;
+    border-style: dotted;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+}
+
+input[type=submit] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+input[type=submit]:focus+label {
+    text-decoration: underline !important;
+}
+
+textarea {
+    width: -webkit-fill-available;
+    width: -moz-available;
+    resize: vertical;
+}
+
+.r {
+    margin-left: 1rem;
+    float: right;
+}
+
+.ib {
+    display: inline-block;
+}
+
+figure {
+    display: flex;
+    margin-left: -1em;
+    margin-right: -1em;
+    position: relative;
+}
+
+.spc {
+    border-top: 1px dotted #1ed760;
+    border-bottom: 1px dotted #1ed760;
+}
+
+.ytc {
+    display: flex;
+    justify-content: center;
+    border-top: 1px dotted #FF0000;
+    border-bottom: 1px dotted #FF0000;
+}
+
+.yti {
+    max-width: 20em;
+}
+
+.scw {
+    color: #1ed760;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.scw a {
+    color: #1ed760;
+}
+
+.scc {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.scw {
+    padding: 1em;
+}
+
+.sic {
+    width: 25%;
+    display: flex;
+    align-items: center;
+}
+
+.sic image {
+    object-fit: cover;
+    max-width: 100%;
+}
+
+.nvis {
+    text-decoration: none;
+    color: inherit;
+}
+
+pre {
+    overflow-x: auto;
+}
+
+code {
+    color: #e571f0;
+}
+
+code:not(pre code):before, code:not(pre code):after {
+    content: "`";
+}
+
+:focus {
+    outline: none;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+}
+
+audio {
+    width: 100%;
+    max-height: 3em;
+}
+
+/** remove the ugly rounded border */
+audio,
+audio::-webkit-media-controls-enclosure {
+    border-radius: 0;
+    font-family: monospace;
+}
+
+/** change the tap color so its ok on mobile + change text color */
+audio::-webkit-media-controls-volume-slider,
+audio::-webkit-media-controls-mute-button {
+    -webkit-tap-highlight-color: white !important;
+    color: white !important;
+}
+
+/** flip the colors forcefully using a filter */
+audio::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-volume-slider,
+audio::-webkit-media-controls-volume-control-hover-background {
+    filter: brightness(0) invert(1) !important;
+}
+
+/** override the image to the light mode version */
+audio::-webkit-media-controls-mute-button {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSJXaW5kb3ciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogICAgPHBhdGggZD0iTTMgOXY2aDRsNSA1VjRMNyA5SDN6bTEzLjUgM2MwLTEuNzctMS4wMi0zLjI5LTIuNS00LjAzdjguMDVjMS40OC0uNzMgMi41LTIuMjUgMi41LTQuMDJ6TTE0IDMuMjN2Mi4wNmMyLjg5Ljg2IDUgMy41NCA1IDYuNzFzLTIuMTEgNS44NS01IDYuNzF2Mi4wNmM0LjAxLS45MSA3LTQuNDkgNy04Ljc3cy0yLjk5LTcuODYtNy04Ljc3eiIvPgogICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIvPgo8L3N2Zz4K) !important;
+}
+
+/** flip the timeline color to make the timeline bar look ok */
+audio::-webkit-media-controls-timeline {
+    filter: brightness(0) invert(1);
+}
+
+audio::-webkit-media-controls-panel {
+    background: #1d1e1e;
+    border-radius: 0;
+    border: none;
+}
+
+audio::-webkit-media-controls-timeline {
+    color: white !important;
+    filter: brightness(0) invert(1);
+}
+
+/** more forceful color flipping abusing filter */
+audio::-webkit-media-controls-time-remaining-display,
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-volume-slider,
+audio::-webkit-media-controls-volume-control-container,
+audio::-webkit-media-controls-mute-button {
+    filter: brightness(0) invert(1);
+    color: white;
+    opacity: 1;
+}
+
+/** remove shadow around the remaining time (1:00 / 1:00) */
+audio::-webkit-media-controls-time-remaining-display,
+audio::-webkit-media-controls-current-time-display {
+    text-shadow: none;
+}
+
+#notfound {
+    display: flex;
+    justify-content: center;
+    margin-top: 30%;
+}
+
+#notfound p {
+    margin: 0;
+    font-size: 1.3em;
+    margin-bottom: 0.5em;
+}
+
+#notfound h1 {
+    font-size: 7rem;
+    font-weight: 400;
+    margin: 0;
+    margin-bottom: -0.15em;
+}
+
+@media only screen and (max-width: 650px) {
+    details, form:not(details form), .cnt {
+        padding: 0 6px;
+    }
+}

@@ -1,0 +1,145 @@
+package view
+
+import (
+	"time"
+	"strconv"
+	"strings"
+	"github.com/Pineapple217/mb/database"
+	ct "github.com/Pineapple217/mb/context"
+)
+
+// TODO: meta data
+templ boiler() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+			<meta name="theme-color" content="#F7208B"/>
+			<meta name="darkreader-lock"/>
+			<title>mb</title>
+		</head>
+		{ children... }
+	</html>
+}
+
+// TODO: branding env vars
+templ Base(tags []database.GetAllTagsRow) {
+	@boiler() {
+		<link rel="stylesheet" href="/static/css/main.css"/>
+		<body>
+			<div class="cnt">
+				<a class="nvis" href="/">
+					@logo()
+				</a>
+				<div class="cc">
+					<p>
+						<a href="https://l-m.dev/">https://l-m.dev</a> - © l-m.dev { strconv.Itoa(time.Now().Year()) }
+						<br/>
+						Welcome! - { ct.GetPostCount(ctx) } total posts. [<a href="https://me.l-m.dev/index.xml">RSS</a>]
+						<br/>
+						Created with &lt;3 with <a href="https://go.dev/">Go</a>.
+						[<a href="https://me.l-m.dev/#latest">LATEST</a>]
+					</p>
+				</div>
+			</div>
+			<hr color="gray"/>
+			if tags != nil {
+				@search(tags)
+				<hr color="gray"/>
+				if ct.IsAuth(ctx) {
+					@createPost()
+					<hr color="gray"/>
+				}
+			}
+		</body>
+		{ children... }
+	}
+}
+
+templ logo() {
+	// made with https://patorjk.com/software/taag/#p=display&f=Elite
+	<pre>
+		{ `
+  • ▌ ▄ ·. ▄▄▄▄· 
+  ·██ ▐███▪▐█ ▀█▪
+  ▐█ ▌▐▌▐█·▐█▀▀█▄
+  ██ ██▌▐█▌██▄▪▐█
+  ▀▀  █▪▀▀▀·▀▀▀▀ 
+` }
+	</pre>
+}
+
+templ search(tags []database.GetAllTagsRow) {
+	<details>
+		<summary>Search <span class="cl">{ ct.GetPostCount(ctx) }</span> posts with <span class="cl">{ strconv.Itoa(len(tags)) }</span> unique tags</summary>
+		<br/>
+		<form action="/" method="GET">
+			for _, tag := range(tags) {
+				// TODO: font size based on count
+				<div class="ib">
+					<input type="checkbox" id={ "tag_" + tag.Tag.(string) } name={ "tag_" + tag.Tag.(string) }/>
+					<label for={ "tag_" + tag.Tag.(string) }>{ tag.Tag.(string) }: <strong>{ strconv.FormatInt(tag.TagCount, 10) } </strong></label>
+				</div>
+			}
+			<br/>
+			<div style="text-align: right;">
+				<abbr title="Case Insensitive Glob Query"><input type="search" name="search" placeholder="example: *.wasm"/></abbr>
+				<label>
+					<input type="submit"/> [ go ]
+				</label>
+			</div>
+		</form>
+	</details>
+}
+
+// func calcFontSize(count int64) string {
+// 	return fmt.Sprintf("font-size: %fem;", 2.0 - float64(tag.TagCount) * 0.02)
+// }
+templ EditPost(post database.Post) {
+	@Base([]database.GetAllTagsRow(nil)) {
+		<br/>
+		<form action={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/edit") } method="POST">
+			<div>
+				<label>
+					tags: <input type="text" name="tags" value={ post.Tags.String } tabindex="1" size="30"/>
+				</label>
+				<input type="submit" id="submit_e" tabindex="3"/>
+				<label for="submit_e">[ save ]</label>
+			</div>
+			<br/>
+			<br/>
+			<textarea name="content" rows={ getRows(post.Content) } tabindex="2">{ post.Content }</textarea>
+			<input type="hidden" value={ strconv.FormatInt(post.CreatedAt, 10) } name="xid"/>
+		</form>
+	}
+}
+
+templ createPost() {
+	<details>
+		<summary>New Post</summary>
+		<br/>
+		<form action="/post" method="POST">
+			<div>
+				<label>
+					tags: <input type="text" name="tags" value="" tabindex="1" size="30"/>
+				</label>
+				<input type="submit" id="submit_p" tabindex="3"/>
+				<label for="submit_p">[ post ]</label>
+			</div>
+			<br/>
+			<br/>
+			<textarea name="content" rows="15" tabindex="2"></textarea>
+		</form>
+	</details>
+}
+
+func getRows(content string) string {
+	// TODO: doesnt count linewraps, shoudnt be longer then the page
+	count := strings.Count(content, "\n")
+	if count < 13 {
+		count = 13
+	}
+	return strconv.Itoa(count + 2)
+}

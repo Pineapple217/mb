@@ -1,0 +1,29 @@
+package view
+
+templ AuthForm() {
+	@boiler() {
+		<link rel="stylesheet" href="/static/css/auth.css"/>
+		<body>
+			<form action="/auth" method="POST">
+				<label>
+					auth: <input type="password" name="auth" autofocus/>
+				</label>
+				<label>
+					<input type="submit"/> [ go ]
+					// TODO: tab selectable also for the search query
+				</label>
+			</form>
+		</body>
+	}
+}
+
+templ AuthRedirect() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+			<meta http-equiv="refresh" content="0; url=/auth"/>
+		</head>
+	</html>
+}

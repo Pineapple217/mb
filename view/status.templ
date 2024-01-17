@@ -1,0 +1,15 @@
+package view
+
+templ NotFound() {
+	@boiler() {
+		// TODO: give own style sheet
+		<link rel="stylesheet" href="/static/css/main.css"/>
+		<div id="notfound">
+			<div>
+				<h1>404</h1>
+				<p>Not Found</p>
+				<a href={ templ.URL("/") }>{ "<- return home" }</a>
+			</div>
+		</div>
+	}
+}

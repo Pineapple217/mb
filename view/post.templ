@@ -1,0 +1,58 @@
+package view
+
+import (
+	"github.com/Pineapple217/mb/database"
+	ct "github.com/Pineapple217/mb/context"
+	"strconv"
+	"strings"
+)
+
+templ postBase(post database.Post) {
+	<article>
+		<header>
+			@templ.Raw(UnixTimeToHTMLDateTime(post.CreatedAt))
+			<p class="s">{ " #" +  strconv.FormatInt(post.CreatedAt, 10) + " " }</p>
+			<div class="r">
+				<a href={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10)) }>[share]</a>
+				if ct.IsAuth(ctx) {
+					<a href={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/edit") } title="edit">[e]</a>
+					<a href={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/delete") } title="delete">[x]</a>
+				}
+			</div>
+			<br/>
+			if post.Tags.Valid {
+				{ "[ " + strings.Replace(post.Tags.String, " ", " | ", -1) + " ]" }
+			}
+			{ "" }
+		</header>
+		<main>
+			@templ.Raw(MdToHTML(ctx, post.Content))
+		</main>
+	</article>
+}
+
+templ Post(post database.Post, tags []database.GetAllTagsRow) {
+	@Base(tags) {
+		@postBase(post)
+	}
+}
+
+templ DeletePost(post database.Post) {
+	@Base([]database.GetAllTagsRow(nil)) {
+		<form action={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/delete") } method="POST">
+			<p class="s">Are you sure you want to delete this post? </p>
+			<input type="hidden" value={ strconv.FormatInt(post.CreatedAt, 10) } name="xid"/>
+			<input type="submit" id="submit_d" tabindex="1"/>
+			<label for="submit_d">[ delete ]</label>
+		</form>
+		@postBase(post)
+	}
+}
+
+templ Posts(posts []database.Post, tags []database.GetAllTagsRow) {
+	@Base(tags) {
+		for _, post := range(posts) {
+			@postBase(post)
+		}
+	}
+}
