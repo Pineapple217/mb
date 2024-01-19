@@ -40,16 +40,16 @@ RETURNING *;
 SELECT * FROM spotify_cache
 WHERE track_id = ? LIMIT 1;
 
--- name: CreateTYThumbCache :one
-INSERT INTO yt_thumb_cache (
-  yt_id, yt_thumb
+-- name: CreateYoutubebCache :one
+INSERT INTO youtube_cache (
+  yt_id, thumb, title, author, author_url
 ) VALUES (
-  ?, ?
+  ?, ?, ?, ?, ?
 )
 RETURNING *;
 
 -- name: GetYoutubeCache :one
-SELECT * FROM yt_thumb_cache
+SELECT * FROM youtube_cache
 WHERE yt_id = ? LIMIT 1;
 
 -- name: GetTagsCount :one

@@ -21,10 +21,15 @@ templ SpotifyEmbed(sc database.SpotifyCache) {
 	</figure>
 }
 
-templ YoutubeEmbed(ytc database.YtThumbCache) {
+templ YoutubeEmbed(ytc database.YoutubeCache) {
 	<figure class="ytc">
 		<a href={ templ.URL("https://www.youtube.com/watch?v=" + ytc.YtID) } target="_blank">
-			<img class="yti" loading="lazy" src={ "https://i3.ytimg.com/vi/" + ytc.YtID + "/" + ytc.YtThumb } alt="YouTube Thumbnail"/>
+			<img class="yti" loading="lazy" src={ "https://i3.ytimg.com/vi/" + ytc.YtID + "/" + ytc.Thumb } alt="YouTube Thumbnail"/>
 		</a>
+		<div class="ytw">
+			<a href={ templ.URL("https://www.youtube.com/watch?v=" + ytc.YtID) } target="_blank">{ ytc.Title }</a>
+			<br/>
+			<a href={ templ.URL(ytc.AuthorUrl) } target="_blank">{ ytc.Author }</a>
+		</div>
 	</figure>
 }

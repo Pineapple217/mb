@@ -16,9 +16,12 @@ CREATE TABLE IF NOT EXISTS spotify_cache (
   audio_preview_url TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS yt_thumb_cache (
+CREATE TABLE IF NOT EXISTS youtube_cache (
   id       INTEGER PRIMARY KEY AUTOINCREMENT,
   yt_id    TEXT    NOT NULL,
-  yt_thumb TEXT    NOT NULL
+  thumb    TEXT    NOT NULL,
+  title    TEXT    NOT NULL,
+  author   TEXT    NOT NULL,
+  author_url TEXT  NOT NULL
 );
 

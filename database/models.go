@@ -25,8 +25,11 @@ type SpotifyCache struct {
 	AudioPreviewUrl string
 }
 
-type YtThumbCache struct {
-	ID      int64
-	YtID    string
-	YtThumb string
+type YoutubeCache struct {
+	ID        int64
+	YtID      string
+	Thumb     string
+	Title     string
+	Author    string
+	AuthorUrl string
 }

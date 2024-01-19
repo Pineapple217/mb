@@ -76,24 +76,40 @@ func (q *Queries) CreateSpotifyCache(ctx context.Context, arg CreateSpotifyCache
 	return i, err
 }
 
-const createTYThumbCache = `-- name: CreateTYThumbCache :one
-INSERT INTO yt_thumb_cache (
-  yt_id, yt_thumb
+const createYoutubebCache = `-- name: CreateYoutubebCache :one
+INSERT INTO youtube_cache (
+  yt_id, thumb, title, author, author_url
 ) VALUES (
-  ?, ?
+  ?, ?, ?, ?, ?
 )
-RETURNING id, yt_id, yt_thumb
+RETURNING id, yt_id, thumb, title, author, author_url
 `
 
-type CreateTYThumbCacheParams struct {
-	YtID    string
-	YtThumb string
+type CreateYoutubebCacheParams struct {
+	YtID      string
+	Thumb     string
+	Title     string
+	Author    string
+	AuthorUrl string
 }
 
-func (q *Queries) CreateTYThumbCache(ctx context.Context, arg CreateTYThumbCacheParams) (YtThumbCache, error) {
-	row := q.db.QueryRowContext(ctx, createTYThumbCache, arg.YtID, arg.YtThumb)
-	var i YtThumbCache
-	err := row.Scan(&i.ID, &i.YtID, &i.YtThumb)
+func (q *Queries) CreateYoutubebCache(ctx context.Context, arg CreateYoutubebCacheParams) (YoutubeCache, error) {
+	row := q.db.QueryRowContext(ctx, createYoutubebCache,
+		arg.YtID,
+		arg.Thumb,
+		arg.Title,
+		arg.Author,
+		arg.AuthorUrl,
+	)
+	var i YoutubeCache
+	err := row.Scan(
+		&i.ID,
+		&i.YtID,
+		&i.Thumb,
+		&i.Title,
+		&i.Author,
+		&i.AuthorUrl,
+	)
 	return i, err
 }
 
@@ -234,14 +250,21 @@ func (q *Queries) GetTagsCount(ctx context.Context) (int64, error) {
 }
 
 const getYoutubeCache = `-- name: GetYoutubeCache :one
-SELECT id, yt_id, yt_thumb FROM yt_thumb_cache
+SELECT id, yt_id, thumb, title, author, author_url FROM youtube_cache
 WHERE yt_id = ? LIMIT 1
 `
 
-func (q *Queries) GetYoutubeCache(ctx context.Context, ytID string) (YtThumbCache, error) {
+func (q *Queries) GetYoutubeCache(ctx context.Context, ytID string) (YoutubeCache, error) {
 	row := q.db.QueryRowContext(ctx, getYoutubeCache, ytID)
-	var i YtThumbCache
-	err := row.Scan(&i.ID, &i.YtID, &i.YtThumb)
+	var i YoutubeCache
+	err := row.Scan(
+		&i.ID,
+		&i.YtID,
+		&i.Thumb,
+		&i.Title,
+		&i.Author,
+		&i.AuthorUrl,
+	)
 	return i, err
 }
 
