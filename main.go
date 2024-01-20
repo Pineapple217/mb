@@ -54,13 +54,15 @@ func main() {
 
 	fmt.Println("Loading middlewares...")
 	e.Use(echoMw.RequestLoggerWithConfig(echoMw.RequestLoggerConfig{
-		LogStatus: true,
-		LogURI:    true,
-		LogMethod: true,
+		LogStatus:  true,
+		LogURI:     true,
+		LogMethod:  true,
+		LogLatency: true,
 		LogValuesFunc: func(c echo.Context, v echoMw.RequestLoggerValues) error {
 			slog.Info("request",
 				"method", v.Method,
 				"status", v.Status,
+				"latency", v.Latency,
 				"path", v.URI,
 			)
 			return nil
