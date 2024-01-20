@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"strconv"
 
 	ct "github.com/Pineapple217/mb/context"
 	"github.com/Pineapple217/mb/database"
@@ -14,13 +13,10 @@ func Stats(next echo.HandlerFunc) echo.HandlerFunc {
 		queries := database.GetQueries()
 		// post count
 		postCount, err := queries.GetPostCount(c.Request().Context())
-		var postCountStr string
 		if err != nil {
-			postCountStr = "???"
-		} else {
-			postCountStr = strconv.FormatInt(postCount, 10)
+			postCount = -1
 		}
-		ctx := context.WithValue(c.Request().Context(), ct.PostCountContextKey, postCountStr)
+		ctx := context.WithValue(c.Request().Context(), ct.PostCountContextKey, postCount)
 
 		c.SetRequest(c.Request().WithContext(ctx))
 		return next(c)

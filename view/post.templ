@@ -49,10 +49,31 @@ templ DeletePost(post database.Post) {
 	}
 }
 
-templ Posts(posts []database.Post, tags []database.GetAllTagsRow) {
+templ Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Component) {
 	@Base(tags) {
+		@nav
 		for _, post := range(posts) {
 			@postBase(post)
 		}
+		@nav
+		<hr color="gray"/>
+		<br/>
 	}
+}
+
+templ Nav(page int, maxPage int, query string) {
+	<nav>
+		<div>
+			if page != 0 {
+				<a href={ templ.URL("/?page=0" + query) }>←← First</a>
+				<a href={ templ.URL("/?page=" + strconv.Itoa(page-1) + query) }>← Previous</a>
+			}
+		</div>
+		<div>
+			if page != maxPage {
+				<a href={ templ.URL("/?page=" + strconv.Itoa(page+1) + query) }>Next →</a>
+				<a href={ templ.URL("/?page=" + strconv.Itoa(maxPage) + query) }>Last →→</a>
+			}
+		</div>
+	</nav>
 }

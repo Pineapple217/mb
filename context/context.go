@@ -1,6 +1,9 @@
 package context
 
-import "context"
+import (
+	"context"
+	"strconv"
+)
 
 func IsAuth(ctx context.Context) bool {
 	if isAuth, ok := ctx.Value(AuthContextKey).(bool); ok {
@@ -9,11 +12,21 @@ func IsAuth(ctx context.Context) bool {
 	return false
 }
 
-func GetPostCount(ctx context.Context) string {
-	if postCount, ok := ctx.Value(PostCountContextKey).(string); ok {
-		return postCount
+func GetPostCountStr(ctx context.Context) string {
+	if postCount, ok := ctx.Value(PostCountContextKey).(int64); ok {
+		if postCount == -1 {
+			return "???"
+		}
+		return strconv.FormatInt(postCount, 10)
 	}
 	return "???"
+}
+
+func GetPostCount(ctx context.Context) int64 {
+	if postCount, ok := ctx.Value(PostCountContextKey).(int64); ok {
+		return postCount
+	}
+	return -1
 }
 
 type contextKey string

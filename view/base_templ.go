@@ -125,9 +125,9 @@ func Base(tags []database.GetAllTagsRow) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
-			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(ct.GetPostCount(ctx))
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(ct.GetPostCountStr(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\base.templ`, Line: 39, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\base.templ`, Line: 39, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -332,9 +332,9 @@ func search(tags []database.GetAllTagsRow) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var23 string
-		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(ct.GetPostCount(ctx))
+		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(ct.GetPostCountStr(ctx))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\base.templ`, Line: 75, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\base.templ`, Line: 75, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
@@ -356,7 +356,7 @@ func search(tags []database.GetAllTagsRow) templ.Component {
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(len(tags)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\base.templ`, Line: 75, Col: 120}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\base.templ`, Line: 75, Col: 123}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {

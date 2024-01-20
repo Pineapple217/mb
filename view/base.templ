@@ -37,7 +37,7 @@ templ Base(tags []database.GetAllTagsRow) {
 					<p>
 						<a href="https://l-m.dev/">https://l-m.dev</a> - © l-m.dev { strconv.Itoa(time.Now().Year()) }
 						<br/>
-						Welcome! - { ct.GetPostCount(ctx) } total posts. [<a href="https://me.l-m.dev/index.xml">RSS</a>]
+						Welcome! - { ct.GetPostCountStr(ctx) } total posts. [<a href="https://me.l-m.dev/index.xml">RSS</a>]
 						<br/>
 						Created with &lt;3 with <a href="https://go.dev/">Go</a>.
 						[<a href="https://me.l-m.dev/#latest">LATEST</a>]
@@ -73,7 +73,7 @@ templ logo() {
 
 templ search(tags []database.GetAllTagsRow) {
 	<details>
-		<summary>Search <span class="cl">{ ct.GetPostCount(ctx) }</span> posts with <span class="cl">{ strconv.Itoa(len(tags)) }</span> unique tags</summary>
+		<summary>Search <span class="cl">{ ct.GetPostCountStr(ctx) }</span> posts with <span class="cl">{ strconv.Itoa(len(tags)) }</span> unique tags</summary>
 		<br/>
 		<form action="/" method="GET">
 			for _, tag := range(tags) {

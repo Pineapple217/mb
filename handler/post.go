@@ -147,20 +147,29 @@ func Posts(c echo.Context) error {
 			queryTags = append(queryTags, strings.TrimPrefix(k, prefix))
 		}
 	}
-
+	pageStr := c.QueryParam("page")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 0 {
+		page = 0
+	}
 	queries := database.GetQueries()
-	posts, err := queries.QueryPost(c.Request().Context(), queryTags, c.QueryParam("search"))
+	posts, postCount, err := queries.QueryPost(
+		c.Request().Context(),
+		queryTags,
+		c.QueryParam("search"),
+		page,
+	)
 	if err != nil {
 		return err
 	}
 
 	tags, err := queries.GetAllTags(c.Request().Context())
-	if err != nil {
-		panic(err)
-	}
-	if tags == nil {
+	if err != nil || tags == nil {
 		tags = []database.GetAllTagsRow{}
 	}
+	maxPage := (postCount - 1) / database.PostsPerPage
+	urlQuery := constructUrlQuery(c.QueryParam("search"), queryTags)
+	nav := view.Nav(page, maxPage, urlQuery)
 
-	return render(c, view.Posts(posts, tags))
+	return render(c, view.Posts(posts, tags, nav))
 }
