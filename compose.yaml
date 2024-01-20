@@ -1,0 +1,10 @@
+services:
+  server:
+    build:
+      context: .
+      target: final
+    volumes:
+      - ./database.db:/app/database.db
+      # bad performace on windows docker desktop
+    ports:
+      - 3000:3000

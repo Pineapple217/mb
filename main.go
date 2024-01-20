@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"embed"
+	"flag"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -20,8 +21,12 @@ import (
 	echoMw "github.com/labstack/echo/v4/middleware"
 )
 
-//go:embed static/public/*
-var publicFS embed.FS
+var (
+	//go:embed static/public/*
+	publicFS embed.FS
+	listen   = flag.String("listen", "127.0.0.1", "Where to listen, 0.0.0.0 is needed for docker")
+	port     = flag.String("port", ":3000", "Port to listen on")
+)
 
 const banner = `
 • ▌ ▄ ·. ▄▄▄▄· 
@@ -35,6 +40,7 @@ https://github.com/Pineapple217/mb
 
 func main() {
 	slog.SetDefault(slog.New(slog.Default().Handler()))
+	flag.Parse()
 	e := echo.New()
 	e.HideBanner = true
 	fmt.Println(banner)
@@ -108,7 +114,7 @@ func main() {
 	e.GET("/", handler.Posts)
 
 	go func() {
-		if err := e.Start("127.0.0.1:3000"); err != nil && err != http.ErrServerClosed {
+		if err := e.Start(*listen + *port); err != nil && err != http.ErrServerClosed {
 			slog.Error("Shutting down the server", "error", err.Error())
 		}
 	}()
