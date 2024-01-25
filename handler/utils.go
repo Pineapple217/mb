@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"bytes"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -13,21 +13,21 @@ func render(c echo.Context, component templ.Component) error {
 }
 
 func constructUrlQuery(search string, tags []string) string {
-	var buffer bytes.Buffer
+	var sb strings.Builder
 	if search != "" {
-		buffer.WriteString("&search=")
-		buffer.WriteString(search)
+		sb.WriteString("&search=")
+		sb.WriteString(search)
 	}
 	if len(tags) != 0 {
-		buffer.WriteString("&")
+		sb.WriteString("&")
 		for i, tag := range tags {
-			buffer.WriteString("tag_")
-			buffer.WriteString(tag)
-			buffer.WriteString("=on")
+			sb.WriteString("tag_")
+			sb.WriteString(tag)
+			sb.WriteString("=on")
 			if i+1 < len(tags) {
-				buffer.WriteString("&")
+				sb.WriteString("&")
 			}
 		}
 	}
-	return buffer.String()
+	return sb.String()
 }
