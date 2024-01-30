@@ -1,11 +1,10 @@
 package handler
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
-	"encoding/hex"
-	"fmt"
+	"encoding/base64"
 	"net/http"
-	"time"
 
 	"github.com/Pineapple217/mb/auth"
 	"github.com/Pineapple217/mb/view"
@@ -13,7 +12,6 @@ import (
 )
 
 func AuthForm(c echo.Context) error {
-
 	return render(c, view.AuthForm())
 }
 
@@ -22,13 +20,17 @@ func Auth(c echo.Context) error {
 	if pw != auth.SecretPassword {
 		return c.Redirect(http.StatusSeeOther, "/auth")
 	}
-	// TODO: replace unix time with crypto safe random
-	hash := sha256.Sum256([]byte(fmt.Sprintf("%d-%s", time.Now().Unix(), auth.SecretPassword)))
+	bytes := make([]byte, 32)
+	if _, err := rand.Read(bytes); err != nil {
+		return err
+	}
+	encoded := base64.URLEncoding.EncodeToString(bytes)
+	hash := sha256.Sum256([]byte(encoded + auth.SecretPassword))
 	auth.SecretCookie = hash
 	cookie := http.Cookie{
 		Name:     "auth",
 		SameSite: http.SameSiteStrictMode,
-		Value:    hex.EncodeToString(hash[:]),
+		Value:    base64.RawStdEncoding.EncodeToString(hash[:]),
 	}
 	c.SetCookie(&cookie)
 	return c.Redirect(http.StatusSeeOther, "/")
