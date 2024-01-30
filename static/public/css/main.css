@@ -222,6 +222,10 @@ pre {
     overflow-x: auto;
 }
 
+.logo {
+    margin-left: 2em;
+}
+
 code {
     color: #e571f0;
 }

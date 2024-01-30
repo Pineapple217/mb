@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/Pineapple217/mb/config"
 	"github.com/Pineapple217/mb/database"
 	"github.com/Pineapple217/mb/embed"
 
@@ -21,7 +22,6 @@ var (
 	reY      *regexp.Regexp = regexp.MustCompile(`https?://(?:www\.)?youtu(?:be\.com/watch\?v=)|(?:\.be/)(\S+)`)
 	reYTID   *regexp.Regexp = regexp.MustCompile(`(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)`)
 	reSID    *regexp.Regexp = regexp.MustCompile(`/track/(\w+)`)
-	timezone *time.Location = initTimezone()
 	renderer *html.Renderer = initRender()
 )
 
@@ -65,6 +65,7 @@ func renderYoutubeEmbed(ctx context.Context, w io.Writer, l *ast.Link, entering 
 }
 
 func makeEmbedRenderHook(ctx context.Context) html.RenderNodeFunc {
+	// TODO: opt out of embed with [link text](url)
 	return func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 		if link, ok := node.(*ast.Link); ok {
 			if reS.MatchString(string(link.Destination)) {
@@ -104,18 +105,9 @@ func initRender() *html.Renderer {
 }
 
 func UnixTimeToHTMLDateTime(unixTime int64) string {
-	goTime := time.Unix(unixTime, 0).In(timezone)
+	goTime := time.Unix(unixTime, 0).In(config.OutputTimezone)
 	formattedTime := goTime.Format("2006-01-02T15:04:05.000Z")
 	htmlDateTime := fmt.Sprintf(`<time datetime="%s">%s</time>`, formattedTime, goTime.Format("Mon, 2 Jan 2006 15:04:05 MST"))
 
 	return htmlDateTime
-}
-
-func initTimezone() *time.Location {
-	// TODO: make it an env
-	loc, err := time.LoadLocation("Europe/Brussels")
-	if err != nil {
-		loc = time.UTC
-	}
-	return loc
 }

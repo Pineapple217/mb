@@ -11,12 +11,11 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/Pineapple217/mb/auth"
+	"github.com/Pineapple217/mb/config"
 	"github.com/Pineapple217/mb/database"
 	"github.com/Pineapple217/mb/handler"
 	"github.com/Pineapple217/mb/middleware"
 
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	echoMw "github.com/labstack/echo/v4/middleware"
 )
@@ -45,19 +44,8 @@ func main() {
 	e.HideBanner = true
 	fmt.Println(banner)
 
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("No .env file found")
-	}
-	password, isSet := os.LookupEnv("AUTH_PASSWORD")
-	if !isSet {
-		fmt.Println("AUHT_PASSWORD is not set. Using random password")
-		fmt.Printf("Auth password: %s\n", auth.SecretPassword)
-	} else {
-		fmt.Println("Auth password succesfully set")
-		auth.SecretPassword = password
-	}
-
+	fmt.Println("Loading configs...")
+	config.Load()
 	fmt.Println("Loading middlewares...")
 	e.Use(echoMw.RequestLoggerWithConfig(echoMw.RequestLoggerConfig{
 		LogStatus:  true,
