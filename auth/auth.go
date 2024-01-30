@@ -7,7 +7,7 @@ import (
 
 var SecretPassword string = generateRandomPassword(32)
 
-var SecretCookie [32]byte
+var SecretCookie string
 
 func generateRandomPassword(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*"

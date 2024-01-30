@@ -26,11 +26,12 @@ func Auth(c echo.Context) error {
 	}
 	encoded := base64.URLEncoding.EncodeToString(bytes)
 	hash := sha256.Sum256([]byte(encoded + auth.SecretPassword))
-	auth.SecretCookie = hash
+	hashStr := base64.RawStdEncoding.EncodeToString(hash[:])
+	auth.SecretCookie = hashStr
 	cookie := http.Cookie{
 		Name:     "auth",
 		SameSite: http.SameSiteStrictMode,
-		Value:    base64.RawStdEncoding.EncodeToString(hash[:]),
+		Value:    hashStr,
 	}
 	c.SetCookie(&cookie)
 	return c.Redirect(http.StatusSeeOther, "/")

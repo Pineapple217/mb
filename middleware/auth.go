@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"encoding/hex"
 	"net/http"
 
 	"github.com/Pineapple217/mb/auth"
@@ -19,7 +18,7 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		if err != nil {
 			isAuth = false
 		} else {
-			if authCookie.Value == hex.EncodeToString(auth.SecretCookie[:]) {
+			if authCookie.Value == auth.SecretCookie {
 				isAuth = true
 			}
 		}
