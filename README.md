@@ -53,6 +53,9 @@ services:
     container_name: mb
     volumes:
       - ./database.db:/app/database.db
+      # this makes sure the datetimes are right on the container
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     env_file:
       - .env
     ports:
