@@ -10,6 +10,59 @@ TODO: better description
 
 TODO
 
+# Dev Setup
+
+TODO
+
+# Deploying
+
+## Docker
+
+This is an expample to run mb with Docker. You can you can use it as a base for your own config.
+
+### Database file
+
+You need to make the database file in advance because Docker wil make it a directory otherwise.
+
+```console
+touch database.db
+chmod 666 database.db
+```
+
+### Env
+
+See [Configuration](#configuration) for more info.
+
+```env
+# .env
+MB_AUTH_PASSWORD=test123
+MB_TIMEZONE=Europe/Brussels
+MB_LOGO=" ▄▄▄·▪   ▐ ▄ ▄▄▄ .\n▐█ ▄███ •█▌▐█▀▄.▀·\n ██▀·▐█·▐█▐▐▌▐▀▀▪▄\n▐█▪·•▐█▌██▐█▌▐█▄▄▌\n.▀   ▀▀▀▀▀ █▪ ▀▀▀ "
+MB_RIGHTS=pine32.be
+MB_LINK=https://pine32.be
+MB_MESSAGE="A funny little cycle."
+```
+
+### Compose file
+
+```yml
+# docker-compose.yml
+services:
+  mb:
+    image: pineapple217/mb:latest
+    container_name: mb
+    volumes:
+      - ./database.db:/app/database.db
+    env_file:
+      - .env
+    ports:
+      - 3000:3000
+```
+
+```console
+docker compose up -d
+```
+
 # Configuration
 
 ## Environment variables
@@ -22,14 +75,6 @@ TODO
 | `MB_RIGHTS`        | Name of the right holder thingy                                                   | `mb.dev` just a placeholder                                             |
 | `MB_LINK`          | Link displayed at the top fo the page                                             | `https://mb.dev` link does not exist                                    |
 | `MB_MESSAGE`       | Message displayed at the top of the page                                          | `Created without any JS.`                                               |
-
-# Dev Setup
-
-TODO
-
-# Deploying
-
-TODO
 
 # Performance
 
