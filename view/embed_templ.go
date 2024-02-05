@@ -77,7 +77,7 @@ func SpotifyEmbed(sc database.SpotifyCache) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a><br><audio controls preload=\"none\" controlsList=\"noplaybackrate nodownload\" volume=\"0.3\"><source src=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></div></div><div class=\"sca\"><audio controls preload=\"none\" controlsList=\"noplaybackrate nodownload\" volume=\"0.3\"><source src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -85,7 +85,7 @@ func SpotifyEmbed(sc database.SpotifyCache) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" type=\"audio/mpeg\"></audio></div></div></figure>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" type=\"audio/mpeg\"></audio></div></figure>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -142,7 +142,7 @@ func YoutubeEmbed(ytc database.YoutubeCache) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(ytc.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\embed.templ`, Line: 29, Col: 99}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\embed.templ`, Line: 30, Col: 99}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -164,7 +164,7 @@ func YoutubeEmbed(ytc database.YoutubeCache) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(ytc.Author)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\embed.templ`, Line: 31, Col: 68}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\embed.templ`, Line: 32, Col: 68}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {

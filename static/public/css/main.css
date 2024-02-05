@@ -69,6 +69,8 @@ br {
     display: flex;
     justify-content: center;
     align-items: center;
+    text-wrap: pretty;
+    margin-left: 0.5em;
 }
 
 a, .s {
@@ -154,6 +156,9 @@ figure {
 .spc {
     border-top: 1px dotted #1ed760;
     border-bottom: 1px dotted #1ed760;
+    display: grid;
+    grid-template-columns: minmax(135px, 25%) auto;
+    grid-template-rows: auto auto;
 }
 
 .ytc {
@@ -164,7 +169,7 @@ figure {
 }
 
 .yti {
-    max-width: 20em;
+    max-width: 18em;
     vertical-align: middle;
 }
 
@@ -192,10 +197,13 @@ figure {
 }
 
 .scc {
-    flex: 1;
+    /* flex: 1; */
     display: flex;
     justify-content: center;
     align-items: center;
+    grid-row: 1;
+    grid-column: 2;
+    align-self: start;
 }
 
 .scw {
@@ -203,7 +211,7 @@ figure {
 }
 
 .sic {
-    width: 25%;
+    /* width: 25%; */
     display: flex;
     align-items: center;
 }
@@ -326,8 +334,40 @@ audio::-webkit-media-controls-current-time-display {
     margin-bottom: -0.15em;
 }
 
+/* article p {
+    text-align: justify;
+} */
+
+.sca {
+    align-self: end;
+    justify-self: center;
+    padding: 1em;
+    width: 90%;
+    grid-row: 1;
+    grid-column: 2;
+}
+
 @media only screen and (max-width: 650px) {
     details, form:not(details form), .cnt {
         padding: 0 6px;
+    }
+
+    .nvis pre {
+        margin-left: 0;
+    }
+
+    .sca {
+        grid-column: 1 / span 2;
+        grid-row: 2;
+        padding: 0em;
+        width: calc(100% - 8px);
+    }
+
+    .scc {
+        align-self: center;
+    }
+
+    .yti {
+        max-width: 10em;
     }
 }

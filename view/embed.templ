@@ -12,11 +12,12 @@ templ SpotifyEmbed(sc database.SpotifyCache) {
 				<a href={ templ.URL("https://open.spotify.com/track/" + sc.TrackID) } target="_blank">{ sc.TrackName }</a>
 				<br/>
 				<a href={ templ.URL("https://open.spotify.com/artist/" + sc.ArtistID) } target="_blank">{ sc.ArtistName }</a>
-				<br/>
-				<audio controls preload="none" controlsList="noplaybackrate nodownload" volume="0.3">
-					<source src={ sc.AudioPreviewUrl } type="audio/mpeg"/>
-				</audio>
 			</div>
+		</div>
+		<div class="sca">
+			<audio controls preload="none" controlsList="noplaybackrate nodownload" volume="0.3">
+				<source src={ sc.AudioPreviewUrl } type="audio/mpeg"/>
+			</audio>
 		</div>
 	</figure>
 }
