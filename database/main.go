@@ -4,7 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log/slog"
+	"os"
 	"strings"
+	"time"
 
 	_ "embed"
 
@@ -103,4 +106,25 @@ func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, p
 	}
 
 	return items, count, nil
+}
+
+const queryBackup = `vacuum into '%s.db'`
+const backupDir = `./backups`
+
+func (q *Queries) Backup(ctx context.Context) error {
+	if _, err := os.Stat(backupDir); os.IsNotExist(err) {
+		err := os.Mkdir(backupDir, 0755)
+		if err != nil {
+			slog.Error("Error creating directory:",
+				"error",
+				err,
+			)
+			return err
+		}
+		slog.Info("Created backup directory", "directory", backupDir)
+	}
+	timeString := time.Now().Format("2006-01-02_15-04-05")
+	file := fmt.Sprintf("%s/backup_%s", backupDir, timeString)
+	_, err := q.db.ExecContext(ctx, fmt.Sprintf(queryBackup, file))
+	return err
 }

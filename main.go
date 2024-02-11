@@ -88,7 +88,7 @@ func main() {
 
 	//TODO better caching with http headers
 
-	//TODO backup
+	e.GET("/backup", middleware.CheckAuth(handler.CreateBackup))
 
 	e.GET("/auth", handler.AuthForm)
 	e.POST("/auth", handler.Auth)
