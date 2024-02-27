@@ -91,3 +91,13 @@ FROM split
 WHERE tag != ''
 GROUP BY tag
 ORDER BY tag_count DESC;
+
+-- name: GetPostPage :one
+SELECT 
+    CAST(
+        CASE 
+            WHEN EXISTS (SELECT 1 FROM posts WHERE posts.created_at = :id)
+            THEN CEIL((SELECT COUNT(*) FROM posts WHERE posts.created_at >= (SELECT posts.created_at FROM posts WHERE created_at = :id)) / 25.0) - 1
+            ELSE -1
+        END AS INT
+    ) AS page_number;

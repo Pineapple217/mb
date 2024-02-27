@@ -7,8 +7,13 @@ import (
 	"strings"
 )
 
-templ postBase(post database.Post) {
-	<article>
+templ postBase(post database.Post, selected bool) {
+	// class="lat"
+	<article
+		if selected {
+			id="#"
+		}
+	>
 		<header>
 			@templ.Raw(UnixTimeToHTMLDateTime(post.CreatedAt))
 			<p class="s">{ " #" +  strconv.FormatInt(post.CreatedAt, 10) + " " }</p>
@@ -33,7 +38,7 @@ templ postBase(post database.Post) {
 
 templ Post(post database.Post, tags []database.GetAllTagsRow) {
 	@Base(tags) {
-		@postBase(post)
+		@postBase(post, false)
 	}
 }
 
@@ -45,15 +50,19 @@ templ DeletePost(post database.Post) {
 			<input type="submit" id="submit_d" tabindex="1"/>
 			<label for="submit_d">[ delete ]</label>
 		</form>
-		@postBase(post)
+		@postBase(post, false)
 	}
 }
 
-templ Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Component) {
+templ Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Component, selected int64) {
 	@Base(tags) {
 		@nav
 		for _, post := range(posts) {
-			@postBase(post)
+			if post.CreatedAt == selected {
+				@postBase(post, true)
+			} else {
+				@postBase(post, false)
+			}
 		}
 		@nav
 		<hr color="gray"/>

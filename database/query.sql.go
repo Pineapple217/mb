@@ -203,6 +203,24 @@ func (q *Queries) GetPostCount(ctx context.Context) (int64, error) {
 	return count, err
 }
 
+const getPostPage = `-- name: GetPostPage :one
+SELECT 
+    CAST(
+        CASE 
+            WHEN EXISTS (SELECT 1 FROM posts WHERE posts.created_at = ?1)
+            THEN CEIL((SELECT COUNT(*) FROM posts WHERE posts.created_at >= (SELECT posts.created_at FROM posts WHERE created_at = ?1)) / 25.0) - 1
+            ELSE -1
+        END AS INT
+    ) AS page_number
+`
+
+func (q *Queries) GetPostPage(ctx context.Context, id int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getPostPage, id)
+	var page_number int64
+	err := row.Scan(&page_number)
+	return page_number, err
+}
+
 const getSpotifyCache = `-- name: GetSpotifyCache :one
 SELECT id, track_id, track_name, artist_name, artist_id, cover_art_url, audio_preview_url FROM spotify_cache
 WHERE track_id = ? LIMIT 1

@@ -99,7 +99,7 @@ func EditPost(c echo.Context) error {
 		return nil
 	}
 
-	return c.Redirect(http.StatusSeeOther, "/post/"+xidStr)
+	return c.Redirect(http.StatusSeeOther, "/?p="+xidStr+"##")
 }
 
 func DeletePostForm(c echo.Context) error {
@@ -138,38 +138,71 @@ func DeletePost(c echo.Context) error {
 	return c.Redirect(http.StatusSeeOther, "/")
 }
 
+const prefix = "tag_"
+
 func Posts(c echo.Context) error {
-	const prefix = "tag_"
-	qps := c.QueryParams()
-	queryTags := make([]string, 0, len(qps))
-	for k := range qps {
-		if strings.HasPrefix(k, prefix) && qps[k][0] == "on" {
-			queryTags = append(queryTags, strings.TrimPrefix(k, prefix))
+	// TODO: could be cleaner
+	pStr := c.QueryParam("p")
+	if pStr != "" {
+		queries := database.GetQueries()
+		p, err := strconv.ParseInt(pStr, 10, 64)
+		if err != nil {
+			return c.NoContent(http.StatusNotFound)
 		}
-	}
-	pageStr := c.QueryParam("page")
-	page, err := strconv.Atoi(pageStr)
-	if err != nil || page < 0 {
-		page = 0
-	}
-	queries := database.GetQueries()
-	posts, postCount, err := queries.QueryPost(
-		c.Request().Context(),
-		queryTags,
-		c.QueryParam("search"),
-		page,
-	)
-	if err != nil {
-		return err
-	}
+		page, err := queries.GetPostPage(c.Request().Context(), p)
+		if err != nil {
+			return err
+		}
+		posts, postCount, err := queries.QueryPost(
+			c.Request().Context(),
+			nil,
+			"",
+			int(page),
+		)
+		if err != nil {
+			return err
+		}
 
-	tags, err := queries.GetAllTags(c.Request().Context())
-	if err != nil || tags == nil {
-		tags = []database.GetAllTagsRow{}
-	}
-	maxPage := (postCount - 1) / database.PostsPerPage
-	urlQuery := constructUrlQuery(c.QueryParam("search"), queryTags)
-	nav := view.Nav(page, maxPage, urlQuery)
+		tags, err := queries.GetAllTags(c.Request().Context())
+		if err != nil || tags == nil {
+			tags = []database.GetAllTagsRow{}
+		}
+		maxPage := (postCount - 1) / database.PostsPerPage
+		nav := view.Nav(int(page), maxPage, "")
 
-	return render(c, view.Posts(posts, tags, nav))
+		return render(c, view.Posts(posts, tags, nav, p))
+	} else {
+		qps := c.QueryParams()
+		queryTags := make([]string, 0, len(qps))
+		for k := range qps {
+			if strings.HasPrefix(k, prefix) && qps[k][0] == "on" {
+				queryTags = append(queryTags, strings.TrimPrefix(k, prefix))
+			}
+		}
+		pageStr := c.QueryParam("page")
+		page, err := strconv.Atoi(pageStr)
+		if err != nil || page < 0 {
+			page = 0
+		}
+		queries := database.GetQueries()
+		posts, postCount, err := queries.QueryPost(
+			c.Request().Context(),
+			queryTags,
+			c.QueryParam("search"),
+			page,
+		)
+		if err != nil {
+			return err
+		}
+
+		tags, err := queries.GetAllTags(c.Request().Context())
+		if err != nil || tags == nil {
+			tags = []database.GetAllTagsRow{}
+		}
+		maxPage := (postCount - 1) / database.PostsPerPage
+		urlQuery := constructUrlQuery(c.QueryParam("search"), queryTags)
+		nav := view.Nav(page, maxPage, urlQuery)
+
+		return render(c, view.Posts(posts, tags, nav, -1))
+	}
 }

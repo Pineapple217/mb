@@ -6,6 +6,7 @@
 html, code, input, textarea {
     font-family: 'Terminus (TTF)';
     font-size: 16px;
+    scroll-padding: 1em;
 }
 
 body {
