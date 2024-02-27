@@ -38,6 +38,9 @@ templ postBase(post database.Post, selected bool) {
 
 templ Post(post database.Post, tags []database.GetAllTagsRow) {
 	@Base(tags) {
+		<nav>
+			<div><a href={ templ.URL("/?p=" + strconv.FormatInt(post.CreatedAt, 10) + "##") }>← View post in timeline</a></div>
+		</nav>
 		@postBase(post, false)
 	}
 }
