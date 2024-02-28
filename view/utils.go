@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"sync"
 	"time"
 
 	"github.com/Pineapple217/mb/config"
@@ -18,11 +19,12 @@ import (
 )
 
 var (
-	reS      *regexp.Regexp = regexp.MustCompile(`https?://open\.spotify\.com/track/(\S+)`)
-	reY      *regexp.Regexp = regexp.MustCompile(`https?://(?:www\.)?youtu(?:be\.com/watch\?v=)|(?:\.be/)(\S+)`)
-	reYTID   *regexp.Regexp = regexp.MustCompile(`(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)`)
-	reSID    *regexp.Regexp = regexp.MustCompile(`/track/(\w+)`)
-	renderer *html.Renderer = initRender()
+	reS             *regexp.Regexp = regexp.MustCompile(`https?://open\.spotify\.com/track/(\S+)`)
+	reY             *regexp.Regexp = regexp.MustCompile(`https?://(?:www\.)?youtu(?:be\.com/watch\?v=)|(?:\.be/)(\S+)`)
+	reYTID          *regexp.Regexp = regexp.MustCompile(`(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)`)
+	reSID           *regexp.Regexp = regexp.MustCompile(`/track/(\w+)`)
+	renderer        *html.Renderer = initRender()
+	redendererMutex sync.Mutex
 )
 
 func renderSpotifyEmbed(ctx context.Context, w io.Writer, l *ast.Link, entering bool) {
@@ -88,6 +90,9 @@ func MdToHTML(ctx context.Context, md string) string {
 	p := parser.NewWithExtensions(extensions)
 	doc := p.Parse([]byte(md))
 
+	// TODO: mutex reduces speed by 20%, add renderer pool speed up
+	redendererMutex.Lock()
+	defer redendererMutex.Unlock()
 	renderer.Opts.RenderNodeHook = makeEmbedRenderHook(ctx)
 
 	// TODO: syntax highlighter with github.com/alecthomas/chroma
