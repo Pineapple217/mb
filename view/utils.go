@@ -11,6 +11,7 @@ import (
 	"github.com/Pineapple217/mb/config"
 	"github.com/Pineapple217/mb/database"
 	"github.com/Pineapple217/mb/embed"
+	"github.com/Pineapple217/mb/pool"
 
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
@@ -23,7 +24,7 @@ var (
 	reY             *regexp.Regexp = regexp.MustCompile(`https?://(?:www\.)?youtu(?:be\.com/watch\?v=)|(?:\.be/)(\S+)`)
 	reYTID          *regexp.Regexp = regexp.MustCompile(`(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)`)
 	reSID           *regexp.Regexp = regexp.MustCompile(`/track/(\w+)`)
-	renderer        *html.Renderer = initRender()
+	rendererPool    *pool.Pool     = initRender()
 	redendererMutex sync.Mutex
 )
 
@@ -91,22 +92,32 @@ func MdToHTML(ctx context.Context, md string) string {
 	doc := p.Parse([]byte(md))
 
 	// TODO: mutex reduces speed by 20%, add renderer pool speed up
-	redendererMutex.Lock()
-	defer redendererMutex.Unlock()
-	renderer.Opts.RenderNodeHook = makeEmbedRenderHook(ctx)
+	// redendererMutex.Lock()
+	// defer redendererMutex.Unlock()
+	r, _ := rendererPool.Get()
+	r.Opts.RenderNodeHook = makeEmbedRenderHook(ctx)
 
 	// TODO: syntax highlighter with github.com/alecthomas/chroma
 	// https://blog.kowalczyk.info/article/cxn3/advanced-markdown-processing-in-go.html
-	return string(markdown.Render(doc, renderer))
+	out := string(markdown.Render(doc, r))
+	rendererPool.Put(r)
+	return out
 }
 
-func initRender() *html.Renderer {
+func initRender() *pool.Pool {
+	s := 10
+	f := NewConn
+	p := pool.NewPool(s, f)
+	return p
+
+}
+
+func NewConn() (*html.Renderer, error) {
 	htmlFlags := html.CommonFlags | html.HrefTargetBlank
 	opts := html.RendererOptions{
 		Flags: htmlFlags,
 	}
-	return html.NewRenderer(opts)
-
+	return html.NewRenderer(opts), nil
 }
 
 func UnixTimeToHTMLDateTime(unixTime int64) string {
