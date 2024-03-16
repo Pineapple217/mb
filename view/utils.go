@@ -79,6 +79,7 @@ func makeEmbedRenderHook(ctx context.Context) html.RenderNodeFunc {
 				return ast.GoToNext, true
 			}
 		}
+		// TODO: add custom video and audio nodes
 		return ast.GoToNext, false
 	}
 }

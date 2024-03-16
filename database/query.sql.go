@@ -10,6 +10,44 @@ import (
 	"database/sql"
 )
 
+const createMediafile = `-- name: CreateMediafile :one
+INSERT INTO mediafiles (
+  uploaded_at, file_name, file_path, file_type, file_extention, thumbnail
+) VALUES (
+  strftime('%s', 'now'), ?, ?, ?, ?, ?
+)
+RETURNING id, file_name, file_path, file_extention, file_type, thumbnail, uploaded_at
+`
+
+type CreateMediafileParams struct {
+	FileName      string
+	FilePath      string
+	FileType      string
+	FileExtention string
+	Thumbnail     []byte
+}
+
+func (q *Queries) CreateMediafile(ctx context.Context, arg CreateMediafileParams) (Mediafile, error) {
+	row := q.db.QueryRowContext(ctx, createMediafile,
+		arg.FileName,
+		arg.FilePath,
+		arg.FileType,
+		arg.FileExtention,
+		arg.Thumbnail,
+	)
+	var i Mediafile
+	err := row.Scan(
+		&i.ID,
+		&i.FileName,
+		&i.FilePath,
+		&i.FileExtention,
+		&i.FileType,
+		&i.Thumbnail,
+		&i.UploadedAt,
+	)
+	return i, err
+}
+
 const createPost = `-- name: CreatePost :one
 INSERT INTO posts (
   created_at, tags, content
@@ -113,6 +151,16 @@ func (q *Queries) CreateYoutubebCache(ctx context.Context, arg CreateYoutubebCac
 	return i, err
 }
 
+const deleteMediafile = `-- name: DeleteMediafile :exec
+DELETE FROM mediafiles
+WHERE id = ?
+`
+
+func (q *Queries) DeleteMediafile(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteMediafile, id)
+	return err
+}
+
 const deletePost = `-- name: DeletePost :exec
 DELETE FROM posts
 WHERE created_at = ?
@@ -172,6 +220,38 @@ func (q *Queries) GetAllTags(ctx context.Context) ([]GetAllTagsRow, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const getMediaThunbnail = `-- name: GetMediaThunbnail :one
+SELECT thumbnail FROM mediafiles
+WHERE file_path = ? LIMIT 1
+`
+
+func (q *Queries) GetMediaThunbnail(ctx context.Context, filePath string) ([]byte, error) {
+	row := q.db.QueryRowContext(ctx, getMediaThunbnail, filePath)
+	var thumbnail []byte
+	err := row.Scan(&thumbnail)
+	return thumbnail, err
+}
+
+const getMediafile = `-- name: GetMediafile :one
+SELECT id, file_name, file_path, file_extention, file_type, thumbnail, uploaded_at FROM mediafiles
+WHERE id = ? LIMIT 1
+`
+
+func (q *Queries) GetMediafile(ctx context.Context, id int64) (Mediafile, error) {
+	row := q.db.QueryRowContext(ctx, getMediafile, id)
+	var i Mediafile
+	err := row.Scan(
+		&i.ID,
+		&i.FileName,
+		&i.FilePath,
+		&i.FileExtention,
+		&i.FileType,
+		&i.Thumbnail,
+		&i.UploadedAt,
+	)
+	return i, err
 }
 
 const getPost = `-- name: GetPost :one
@@ -286,6 +366,42 @@ func (q *Queries) GetYoutubeCache(ctx context.Context, ytID string) (YoutubeCach
 	return i, err
 }
 
+const listMediafiles = `-- name: ListMediafiles :many
+SELECT id, file_name, file_path, file_extention, file_type, thumbnail, uploaded_at FROM mediafiles
+ORDER BY uploaded_at DESC
+`
+
+func (q *Queries) ListMediafiles(ctx context.Context) ([]Mediafile, error) {
+	rows, err := q.db.QueryContext(ctx, listMediafiles)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Mediafile
+	for rows.Next() {
+		var i Mediafile
+		if err := rows.Scan(
+			&i.ID,
+			&i.FileName,
+			&i.FilePath,
+			&i.FileExtention,
+			&i.FileType,
+			&i.Thumbnail,
+			&i.UploadedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listPosts = `-- name: ListPosts :many
 SELECT id, created_at, tags, content FROM posts
 ORDER BY created_at DESC
@@ -317,6 +433,22 @@ func (q *Queries) ListPosts(ctx context.Context) ([]Post, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateMedia = `-- name: UpdateMedia :exec
+UPDATE mediafiles
+set file_name = ?
+WHERE id = ?
+`
+
+type UpdateMediaParams struct {
+	FileName string
+	ID       int64
+}
+
+func (q *Queries) UpdateMedia(ctx context.Context, arg UpdateMediaParams) error {
+	_, err := q.db.ExecContext(ctx, updateMedia, arg.FileName, arg.ID)
+	return err
 }
 
 const updatePost = `-- name: UpdatePost :exec

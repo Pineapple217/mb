@@ -6,7 +6,18 @@ package database
 
 import (
 	"database/sql"
+	"time"
 )
+
+type Mediafile struct {
+	ID            int64
+	FileName      string
+	FilePath      string
+	FileExtention string
+	FileType      string
+	Thumbnail     []byte
+	UploadedAt    time.Time
+}
 
 type Post struct {
 	ID        int64

@@ -25,3 +25,12 @@ CREATE TABLE IF NOT EXISTS youtube_cache (
   author_url TEXT  NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS mediafiles (
+  id       INTEGER PRIMARY KEY AUTOINCREMENT,
+  file_name TEXT NOT NULL,
+  file_path TEXT NOT NULL,
+  file_extention TEXT NOT NULL,
+  file_type TEXT NOT NULL,
+  thumbnail BLOB NOT NULL,
+  uploaded_at TIMESTAMP NOT NULL
+)

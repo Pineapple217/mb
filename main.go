@@ -14,6 +14,7 @@ import (
 	"github.com/Pineapple217/mb/config"
 	"github.com/Pineapple217/mb/database"
 	"github.com/Pineapple217/mb/handler"
+	"github.com/Pineapple217/mb/media"
 	"github.com/Pineapple217/mb/middleware"
 
 	"github.com/labstack/echo/v4"
@@ -43,6 +44,8 @@ func main() {
 	e := echo.New()
 	e.HideBanner = true
 	fmt.Println(banner)
+
+	media.CreateUploadDir()
 
 	fmt.Println("Loading configs...")
 	config.Load()
@@ -100,6 +103,17 @@ func main() {
 	e.POST("/post/:xid/delete", middleware.CheckAuth(handler.DeletePost))
 	e.POST("/post", middleware.CheckAuth(handler.CreatePost))
 	e.GET("/", handler.Posts)
+
+	e.GET("/media/t/:name", handler.Thumbnail)
+	e.GET("/media/:id", handler.Mediafile)
+	e.GET("/media/:id/edit", middleware.CheckAuth(handler.MediaEditForm))
+	e.POST("/media/:id/edit", middleware.CheckAuth(handler.MediaEdit))
+	e.GET("/media/:id/delete", middleware.CheckAuth(handler.MediaDeleteForm))
+	e.POST("/media/:id/delete", middleware.CheckAuth(handler.MediaDelete))
+	e.GET("/media", middleware.CheckAuth(handler.Media))
+	e.POST("/media", middleware.CheckAuth(handler.MediaUpload))
+
+	e.Static("/m", media.UploadDir)
 
 	go func() {
 		if err := e.Start(*listen + *port); err != nil && err != http.ErrServerClosed {

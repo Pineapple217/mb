@@ -1,3 +1,4 @@
+/* TODO: nice looking scroll bar and prevent scrollbar popping */
 @font-face {
     font-family: 'Terminus (TTF)';
     src: url('/static/fonts/TerminusTTF.woff2') format('woff2');
@@ -25,6 +26,7 @@ p, label, input, textarea, details, ul, li, h1, h2, h3, h4, h5, h6 {
     color: #938C81;
 }
 
+/* TODO: higher contrast colour scheme */
 article {
     background-color: rgb(33, 31, 32);
     border: solid 2px rgb(130, 122, 111);
@@ -111,6 +113,14 @@ input[type=search], input[type=text], textarea {
     border: solid 2px #923B2C;
     background-color: inherit;
     border-style: dotted;
+}
+
+input[type=file]::file-selector-button {
+    display: none;
+}
+
+input[type=file] {
+    width: 60%;
 }
 
 input:focus, textarea:focus {
@@ -350,6 +360,45 @@ audio::-webkit-media-controls-current-time-display {
     grid-column: 2;
 }
 
+.mdc {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 16px;
+    justify-content: space-between;
+}
+
+.mde {
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    max-width: 150px;
+}
+
+.mde img {
+    max-height: 150px;
+    max-width: 150px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* .mde .delete {
+    width: 100%;
+    display: block;
+    text-align: right;
+} */
+
+img.max {
+    max-height: none;
+}
+
+.mdr {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    column-gap: 0.2em;
+}
+
 @media only screen and (max-width: 650px) {
     details, form:not(details form), .cnt {
         padding: 0 6px;
@@ -373,5 +422,9 @@ audio::-webkit-media-controls-current-time-display {
     .yti {
         width: 10em;
 
+    }
+
+    .mdc {
+        margin: 0px;
     }
 }

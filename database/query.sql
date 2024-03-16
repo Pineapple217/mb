@@ -101,3 +101,34 @@ SELECT
             ELSE -1
         END AS INT
     ) AS page_number;
+    
+
+
+-- name: ListMediafiles :many
+SELECT * FROM mediafiles
+ORDER BY uploaded_at DESC;
+
+-- name: CreateMediafile :one
+INSERT INTO mediafiles (
+  uploaded_at, file_name, file_path, file_type, file_extention, thumbnail
+) VALUES (
+  strftime('%s', 'now'), ?, ?, ?, ?, ?
+)
+RETURNING *;
+
+-- name: GetMediaThunbnail :one
+SELECT thumbnail FROM mediafiles
+WHERE file_path = ? LIMIT 1;
+
+-- name: GetMediafile :one
+SELECT * FROM mediafiles
+WHERE id = ? LIMIT 1;
+
+-- name: DeleteMediafile :exec
+DELETE FROM mediafiles
+WHERE id = ?;
+
+-- name: UpdateMedia :exec
+UPDATE mediafiles
+set file_name = ?
+WHERE id = ?;

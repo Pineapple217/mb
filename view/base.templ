@@ -25,29 +25,33 @@ templ boiler() {
 	</html>
 }
 
+templ header() {
+	<div class="cnt">
+		<a class="nvis" href="/">
+			<pre class="logo">
+				{ config.HomepageLogo }
+			</pre>
+		</a>
+		<div class="cc">
+			<p>
+				<a href={ templ.URL(config.HomepageLink) }>{ config.HomepageLink }</a>
+				- © { config.HomepageRights }
+				{ strconv.Itoa(time.Now().Year()) }
+				<br/>
+				Welcome! - { ct.GetPostCountStr(ctx) } total posts. [<a href="/index.xml">RSS</a>]
+				<br/>
+				{ config.HomepageMessage }
+				[<a href="/#latest">LATEST</a>]
+			</p>
+		</div>
+	</div>
+}
+
 templ Base(tags []database.GetAllTagsRow) {
 	@boiler() {
 		<link rel="stylesheet" href="/static/css/main.css"/>
 		<body>
-			<div class="cnt">
-				<a class="nvis" href="/">
-					<pre class="logo">
-						{ config.HomepageLogo }
-					</pre>
-				</a>
-				<div class="cc">
-					<p>
-						<a href={ templ.URL(config.HomepageLink) }>{ config.HomepageLink }</a>
-						- © { config.HomepageRights }
-						{ strconv.Itoa(time.Now().Year()) }
-						<br/>
-						Welcome! - { ct.GetPostCountStr(ctx) } total posts. [<a href="/index.xml">RSS</a>]
-						<br/>
-						{ config.HomepageMessage }
-						[<a href="/#latest">LATEST</a>]
-					</p>
-				</div>
-			</div>
+			@header()
 			<hr color="gray"/>
 			if tags != nil {
 				@search(tags)
