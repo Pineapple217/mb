@@ -12,17 +12,18 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/Pineapple217/mb/config"
 	"github.com/Pineapple217/mb/database"
 )
 
-const UploadDir = "./uploads"
+const UploadDir = config.DataDir + "/uploads"
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 var invalidCharsR = regexp.MustCompile(`[^\w\s-.]+`)
 
 func CreateUploadDir() {
 	if _, err := os.Stat(UploadDir); os.IsNotExist(err) {
-		err := os.Mkdir(UploadDir, 0666)
+		err := os.Mkdir(UploadDir, 0755)
 		if err != nil {
 			slog.Error("Failed to create directory",
 				"dir", UploadDir,

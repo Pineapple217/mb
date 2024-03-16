@@ -45,6 +45,7 @@ func main() {
 	e.HideBanner = true
 	fmt.Println(banner)
 
+	CreateDataDir()
 	media.CreateUploadDir()
 
 	fmt.Println("Loading configs...")
@@ -82,7 +83,7 @@ func main() {
 	})
 
 	fmt.Println("Loading database...")
-	database.Init("file:database.db")
+	database.Init("file:" + config.DataDir + "/database.db")
 
 	// e.Static("/static", "./static/public")
 	s.StaticFS("/", echo.MustSubFS(publicFS, "static/public"))
@@ -128,5 +129,17 @@ func main() {
 	defer cancel()
 	if err := e.Shutdown(ctx); err != nil {
 		slog.Error(err.Error())
+	}
+}
+
+func CreateDataDir() {
+	if _, err := os.Stat(config.DataDir); os.IsNotExist(err) {
+		err := os.Mkdir(config.DataDir, 0755)
+		if err != nil {
+			slog.Error("Failed to create directory",
+				"dir", config.DataDir,
+				"error", err,
+			)
+		}
 	}
 }

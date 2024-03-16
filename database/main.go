@@ -11,6 +11,7 @@ import (
 
 	_ "embed"
 
+	"github.com/Pineapple217/mb/config"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -24,6 +25,19 @@ var (
 
 func Init(databaseSource string) {
 	ctx := context.Background()
+
+	if _, err := os.Stat(backupDir); os.IsNotExist(err) {
+		err := os.Mkdir(backupDir, 0755)
+		if err != nil {
+			slog.Error("Error creating directory:",
+				"error",
+				err,
+			)
+
+		}
+		slog.Debug("Created backup directory", "directory", backupDir)
+	}
+
 	db, err := sql.Open("sqlite3", databaseSource)
 	if err != nil {
 		panic(err)
@@ -109,20 +123,9 @@ func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, p
 }
 
 const queryBackup = `vacuum into '%s.db'`
-const backupDir = `./backups`
+const backupDir = config.DataDir + `/backups`
 
 func (q *Queries) Backup(ctx context.Context) error {
-	if _, err := os.Stat(backupDir); os.IsNotExist(err) {
-		err := os.Mkdir(backupDir, 0755)
-		if err != nil {
-			slog.Error("Error creating directory:",
-				"error",
-				err,
-			)
-			return err
-		}
-		slog.Info("Created backup directory", "directory", backupDir)
-	}
 	timeString := time.Now().Format("2006-01-02_15-04-05")
 	file := fmt.Sprintf("%s/backup_%s", backupDir, timeString)
 	_, err := q.db.ExecContext(ctx, fmt.Sprintf(queryBackup, file))

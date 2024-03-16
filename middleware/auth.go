@@ -34,6 +34,7 @@ func CheckAuth(next echo.HandlerFunc) echo.HandlerFunc {
 		if !ct.IsAuth(c.Request().Context()) {
 			c.Response().Writer.WriteHeader(http.StatusForbidden)
 			return view.AuthRedirect().Render(c.Request().Context(), c.Response().Writer)
+			// TODO: add post-auth redirect back to og url
 		} else {
 			return next(c)
 		}

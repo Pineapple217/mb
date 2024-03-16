@@ -38,15 +38,6 @@ go install github.com/cosmtrek/air@latest
 
 This is an expample to run mb with Docker. You can you can use it as a base for your own config.
 
-### Database file
-
-You need to make the database file in advance because Docker wil make it a directory otherwise.
-
-```console
-touch database.db
-chmod 666 database.db
-```
-
 ### Env
 
 See [Configuration](#configuration) for more info.
@@ -70,7 +61,7 @@ services:
     image: pineapple217/mb:latest
     container_name: mb
     volumes:
-      - ./database.db:/app/database.db
+      - ./data:/app/data
       # this makes sure the datetimes are right on the container
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro

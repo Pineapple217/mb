@@ -4,7 +4,7 @@ services:
       context: .
       target: final
     volumes:
-      - ./database.db:/app/database.db
+      - ./data:/app/data
       # bad performace on windows docker desktop
     ports:
       - 3000:3000

@@ -14,6 +14,8 @@ const (
 	defaultLink    = "https://mb.dev"
 	defaultRights  = "mb.dev"
 	defaultMessage = "Created without any JS."
+
+	DataDir = "./data"
 )
 
 var (
