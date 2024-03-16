@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -102,10 +103,21 @@ func MediaDelete(c echo.Context) error {
 	}
 
 	queries := database.GetQueries()
-	err = queries.DeleteMediafile(c.Request().Context(), id)
+
+	m, err := queries.GetMediafile(c.Request().Context(), id)
 	if err != nil {
 		c.Response().Writer.WriteHeader(http.StatusBadRequest)
 		return nil
+	}
+	err = media.DeleteFile(m.FilePath)
+	if err != nil {
+		return err
+	}
+
+	err = queries.DeleteMediafile(c.Request().Context(), id)
+	if err != nil {
+		slog.Warn("Deleted mediafile but could not delete db record", "err", err, "id", m.ID)
+		return err
 	}
 
 	return c.Redirect(http.StatusSeeOther, "/media")

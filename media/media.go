@@ -98,6 +98,21 @@ func SaveFile(ctx context.Context, f *multipart.FileHeader, customName string) e
 	return nil
 }
 
+func DeleteFile(filename string) error {
+	f := filepath.Join(UploadDir, filename)
+	err := os.Remove(f)
+	if os.IsNotExist(err) {
+		slog.Warn("File to delete not found", "file", f)
+		return nil
+	}
+	if err != nil {
+		slog.Info("Delete failed", "file", f, "error", err)
+		return err
+	}
+	slog.Debug("Upload deleted", "file", f)
+	return nil
+}
+
 func getFileExtension(filename string) string {
 	ext := filepath.Ext(filename)
 	// Remove the dot from the extension

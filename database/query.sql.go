@@ -239,6 +239,7 @@ SELECT id, file_name, file_path, file_extention, file_type, thumbnail, uploaded_
 WHERE id = ? LIMIT 1
 `
 
+// TODO: dont get thumbnail data un this request
 func (q *Queries) GetMediafile(ctx context.Context, id int64) (Mediafile, error) {
 	row := q.db.QueryRowContext(ctx, getMediafile, id)
 	var i Mediafile
