@@ -1,18 +1,24 @@
 # mb
 
-micro-blog
+Mb is as a micro blog server that aims to be small, fast and self contained. It was heavly inspired by [this porject](https://github.com/l1mey112/me.l-m.dev) that was writen in V. I rewrote it in Go in a mutch cleaner fashion and added features. The main simularaties that are left is the philosophy and the visuals (with are improved for mobile).
 
-insiperd by https://github.com/l1mey112/me.l-m.dev
+## Features
 
-TODO: better description
-
-# Features
-
-TODO
+- Easy deploy with Docker or single binary
+- Simple authentication
+- Full markdown support
+- Fully self contained with no external dependencies
+- 100% Javascript free
+- RSS feed
+- Custom Youtube and Spotify embeds
+- Build in media manager for images (video and audio comming soon)
+- Build in backups
+- Mobile friendly
+- Light weight and performant
+- Tag and text search
+- ...
 
 # Dev Setup
-
-TODO
 
 ## Dev dependencies
 
@@ -91,6 +97,8 @@ docker compose up -d
 | `MB_HOST`          | The full host url where the blog is hosted. For ex. `https://mb.pine32.be`        | `http://localhost:3000`                                                 |
 
 # Performance
+
+TODO
 
 profiling util
 
