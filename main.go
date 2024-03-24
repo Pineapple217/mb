@@ -16,6 +16,7 @@ import (
 	"github.com/Pineapple217/mb/handler"
 	"github.com/Pineapple217/mb/media"
 	"github.com/Pineapple217/mb/middleware"
+	"github.com/Pineapple217/mb/rss"
 
 	"github.com/labstack/echo/v4"
 	echoMw "github.com/labstack/echo/v4/middleware"
@@ -88,7 +89,7 @@ func main() {
 	// e.Static("/static", "./static/public")
 	s.StaticFS("/", echo.MustSubFS(publicFS, "static/public"))
 
-	//TODO RSS
+	e.GET("/index.xml", rss.RSSFeed)
 
 	//TODO better caching with http headers
 

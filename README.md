@@ -50,6 +50,7 @@ MB_LOGO=" ▄▄▄·▪   ▐ ▄ ▄▄▄ .\n▐█ ▄███ •█▌▐
 MB_RIGHTS=pine32.be
 MB_LINK=https://pine32.be
 MB_MESSAGE="A funny little cycle."
+MB_HOST=https://mb.pine32.be
 ```
 
 ### Compose file
@@ -87,6 +88,7 @@ docker compose up -d
 | `MB_RIGHTS`        | Name of the right holder thingy                                                   | `mb.dev` just a placeholder                                             |
 | `MB_LINK`          | Link displayed at the top fo the page                                             | `https://mb.dev` link does not exist                                    |
 | `MB_MESSAGE`       | Message displayed at the top of the page                                          | `Created without any JS.`                                               |
+| `MB_HOST`          | The full host url where the blog is hosted. For ex. `https://mb.pine32.be`        | `http://localhost:3000`                                                 |
 
 # Performance
 

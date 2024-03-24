@@ -14,6 +14,7 @@ const (
 	defaultLink    = "https://mb.dev"
 	defaultRights  = "mb.dev"
 	defaultMessage = "Created without any JS."
+	defaultHost    = "http://localhost:3000"
 
 	DataDir = "./data"
 )
@@ -24,6 +25,7 @@ var (
 	HomepageLink    string
 	HomepageRights  string
 	HomepageMessage string
+	Host            string
 )
 
 func Load() {
@@ -45,6 +47,7 @@ func Load() {
 	initLink()
 	initRights()
 	initMessage()
+	initHost()
 }
 
 func initTimezone() {
@@ -97,4 +100,13 @@ func initMessage() {
 		return
 	}
 	HomepageMessage = message
+}
+
+func initHost() {
+	host, isSet := os.LookupEnv("MB_HOST")
+	if !isSet {
+		Host = defaultHost
+		return
+	}
+	Host = host
 }
