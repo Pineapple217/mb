@@ -1,6 +1,6 @@
-# mb
+# About
 
-Mb is as a micro blog server that aims to be small, fast and self contained. It was heavly inspired by [this porject](https://github.com/l1mey112/me.l-m.dev) that was writen in V. I rewrote it in Go in a mutch cleaner fashion and added features. The main simularaties that are left is the philosophy and the visuals (with are improved for mobile).
+Mb is as a micro blog server that aims to be small, fast and self contained. It was heavly inspired by [this porject](https://github.com/l1mey112/me.l-m.dev) that was writen in V. I rewrote it in Go in a mutch cleaner fashion and added features. The main simularaties that are left is the philosophy and the visuals (which are improved for mobile).
 
 ## Features
 
