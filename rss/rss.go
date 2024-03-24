@@ -13,17 +13,26 @@ import (
 type RSS struct {
 	XMLName xml.Name `xml:"rss"`
 	Version string   `xml:"version,attr"`
-	Channel Channel
+	Xmlns   string   `xml:"xmlns:atom,attr"`
+	Channel Channel  `xml:"channel"`
 }
 
 type Channel struct {
-	Title       string `xml:"title"`
-	Description string `xml:"description"`
-	Link        string `xml:"link"`
-	Generator   string `xml:"generator"`
-	Language    string `xml:"language"`
-	Copyright   string `xml:"copyright"`
-	Items       []Item `xml:"item"`
+	Title       string   `xml:"title"`
+	Description string   `xml:"description"`
+	Link        string   `xml:"link"`
+	Generator   string   `xml:"generator"`
+	Language    string   `xml:"language"`
+	Copyright   string   `xml:"copyright"`
+	AtomLink    AtomLink `xml:"atom:link"`
+	Items       []Item   `xml:"item"`
+}
+
+type AtomLink struct {
+	XMLName xml.Name `xml:"atom:link"`
+	Href    string   `xml:"href,attr"`
+	Rel     string   `xml:"rel,attr"`
+	Type    string   `xml:"type,attr"`
 }
 
 type Item struct {
@@ -32,6 +41,7 @@ type Item struct {
 	Link        string `xml:"link"`
 	PubDate     string `xml:"pubDate"`
 	Category    string `xml:"category"`
+	Guid        string `xml:"guid"`
 }
 
 func RSSFeed(c echo.Context) error {
@@ -51,20 +61,23 @@ func RSSFeed(c echo.Context) error {
 			PubDate:     time.Unix(post.CreatedAt, 0).Format(time.RFC1123Z),
 			Category:    post.Tags.String,
 			Description: truncateString(post.Content),
+			Guid:        config.Host + "/post/" + unixTime,
 		}
 		rssPosts = append(rssPosts, p)
 	}
 
 	feed := RSS{
 		Version: "2.0",
+		Xmlns:   "http://www.w3.org/2005/Atom",
 		Channel: Channel{
 			Title:       "Micro Blog of " + config.HomepageRights,
 			Description: config.HomepageMessage,
-			Link:        config.Host + "/index.xml",
+			Link:        config.Host,
 			Items:       rssPosts,
 			Generator:   "Golang",
 			Language:    "en-uk",
 			Copyright:   "Copyright " + strconv.Itoa(time.Now().Year()) + ", " + config.HomepageRights,
+			AtomLink:    AtomLink{Href: config.Host + "/index.xml", Rel: "self", Type: "application/rss+xml"},
 		},
 	}
 	xmlData, err := xml.MarshalIndent(feed, "", "    ")
