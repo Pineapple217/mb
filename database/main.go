@@ -59,33 +59,32 @@ const countPosts = `SELECT COUNT(*) FROM posts`
 const queryPostsOrder = ` ORDER BY created_at DESC`
 
 func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, page int) ([]Post, int, error) {
-	// TODO string building via byte buffer
-	var filter string
+	var filter strings.Builder
 	if search != "" {
-		filter += fmt.Sprintf(" where (LOWER(content) glob '*%s*' collate nocase)",
-			strings.ToLower(search))
+		filter.WriteString(fmt.Sprintf(" where (LOWER(content) glob '*%s*' collate nocase)",
+			strings.ToLower(search)))
 	}
 
 	if len(tags) != 0 {
 		if search != "" {
-			filter += " and ("
+			filter.WriteString(" and (")
 		} else {
-			filter += " where ("
+			filter.WriteString(" where (")
 		}
 
 		for i, tag := range tags {
-			filter += fmt.Sprintf("tags like '%%%s%%' escape '\\'", tag)
+			filter.WriteString(fmt.Sprintf("tags like '%%%s%%' escape '\\'", tag))
 
 			if i+1 < len(tags) {
-				filter += " and "
+				filter.WriteString(" and ")
 			} else {
-				filter += ")"
+				filter.WriteString(")")
 			}
 		}
 	}
 	limit := fmt.Sprintf(" limit %d offset %d", PostsPerPage, PostsPerPage*page)
-	query := queryPosts + filter + queryPostsOrder + limit
-	countQuery := countPosts + filter
+	query := queryPosts + filter.String() + queryPostsOrder + limit
+	countQuery := countPosts + filter.String()
 
 	rows, err := q.db.QueryContext(ctx, query)
 	if err != nil {
