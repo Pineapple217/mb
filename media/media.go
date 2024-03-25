@@ -56,11 +56,13 @@ func SaveFile(ctx context.Context, f *multipart.FileHeader, customName string) e
 	fPathFull := filepath.Join(UploadDir, fPath)
 
 	_, err = os.Stat(fPathFull)
-	for !os.IsNotExist(err) {
-		// TODO: although unlikely, an infinite loop is possible
+
+	i := 0
+	for !os.IsNotExist(err) && i < 100 {
 		fPath = makeValidFileName(name) + "_" + generateRandom(3) + "." + ext
 		fPathFull = filepath.Join(UploadDir, fPath)
 		_, err = os.Stat(fPathFull)
+		i++
 	}
 
 	dst, err := os.Create(fPathFull)
