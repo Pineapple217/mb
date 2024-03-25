@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"net/http"
+	"net/url"
 
 	"github.com/Pineapple217/mb/auth"
 	"github.com/Pineapple217/mb/view"
@@ -12,7 +13,11 @@ import (
 )
 
 func AuthForm(c echo.Context) error {
-	return render(c, view.AuthForm())
+	r, err := url.QueryUnescape(c.QueryParam("r"))
+	if err != nil || r == "" {
+		r = "/"
+	}
+	return render(c, view.AuthForm(r))
 }
 
 func Auth(c echo.Context) error {
@@ -34,5 +39,6 @@ func Auth(c echo.Context) error {
 		Value:    hashStr,
 	}
 	c.SetCookie(&cookie)
-	return c.Redirect(http.StatusSeeOther, "/")
+	r := c.FormValue("redirect")
+	return c.Redirect(http.StatusSeeOther, r)
 }

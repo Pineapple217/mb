@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"net/http"
+	"net/url"
 
 	"github.com/Pineapple217/mb/auth"
 	ct "github.com/Pineapple217/mb/context"
@@ -32,9 +33,9 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 func CheckAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		if !ct.IsAuth(c.Request().Context()) {
-			c.Response().Writer.WriteHeader(http.StatusForbidden)
-			return view.AuthRedirect().Render(c.Request().Context(), c.Response().Writer)
-			// TODO: add post-auth redirect back to og url
+			c.Response().Writer.WriteHeader(http.StatusUnauthorized)
+			r := url.QueryEscape(c.Request().URL.Path)
+			return view.AuthRedirect(r).Render(c.Request().Context(), c.Response().Writer)
 		} else {
 			return next(c)
 		}

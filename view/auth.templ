@@ -1,6 +1,6 @@
 package view
 
-templ AuthForm() {
+templ AuthForm(redirect string) {
 	@boiler() {
 		<link rel="stylesheet" href="/static/css/auth.css"/>
 		<body>
@@ -12,18 +12,19 @@ templ AuthForm() {
 					<input type="submit"/> [ go ]
 					// TODO: tab selectable also for the search query
 				</label>
+				<input type="hidden" value={ redirect } name="redirect"/>
 			</form>
 		</body>
 	}
 }
 
-templ AuthRedirect() {
+templ AuthRedirect(postAuthRedirect string) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-			<meta http-equiv="refresh" content="0; url=/auth"/>
+			<meta http-equiv="refresh" content={ "0; url=/auth?r=" + postAuthRedirect }/>
 		</head>
 	</html>
 }
