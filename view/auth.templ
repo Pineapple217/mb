@@ -5,14 +5,12 @@ templ AuthForm(redirect string) {
 		<link rel="stylesheet" href="/static/css/auth.css"/>
 		<body>
 			<form action="/auth" method="POST">
-				<label>
-					auth: <input type="password" name="auth" autofocus/>
-				</label>
-				<label>
-					<input type="submit"/> [ go ]
-					// TODO: tab selectable also for the search query
-				</label>
 				<input type="hidden" value={ redirect } name="redirect"/>
+				<label>
+					auth: <input type="password" name="auth" tabindex="1" autofocus/>
+				</label>
+				<input type="submit" id="submit" tabindex="2"/>
+				<label for="submit">[ go ]</label>
 			</form>
 		</body>
 	}

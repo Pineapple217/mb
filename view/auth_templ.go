@@ -29,7 +29,7 @@ func AuthForm(redirect string) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<link rel=\"stylesheet\" href=\"/static/css/auth.css\"><body><form action=\"/auth\" method=\"POST\"><label>auth: <input type=\"password\" name=\"auth\" autofocus></label> <label><input type=\"submit\"> [ go ]\r</label> <input type=\"hidden\" value=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<link rel=\"stylesheet\" href=\"/static/css/auth.css\"><body><form action=\"/auth\" method=\"POST\"><input type=\"hidden\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -37,7 +37,7 @@ func AuthForm(redirect string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" name=\"redirect\"></form></body>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" name=\"redirect\"> <label>auth: <input type=\"password\" name=\"auth\" tabindex=\"1\" autofocus></label> <input type=\"submit\" id=\"submit\" tabindex=\"2\"> <label for=\"submit\">[ go ]</label></form></body>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
