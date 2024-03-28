@@ -1,11 +1,14 @@
 package database
 
 import (
+	"archive/tar"
 	"context"
 	"database/sql"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -121,12 +124,96 @@ func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, p
 	return items, count, nil
 }
 
-const queryBackup = `vacuum into '%s.db'`
+const queryBackup = `vacuum into '%s'`
 const backupDir = config.DataDir + `/backups`
 
+// TODO: cleanup
 func (q *Queries) Backup(ctx context.Context) error {
 	timeString := time.Now().Format("2006-01-02_15-04-05")
-	file := fmt.Sprintf("%s/backup_%s", backupDir, timeString)
+	file := fmt.Sprintf("%s/backup_%s.db", backupDir, timeString)
 	_, err := q.db.ExecContext(ctx, fmt.Sprintf(queryBackup, file))
+	if err != nil {
+		return err
+	}
+
+	tarballName := fmt.Sprintf("%s/backup_%s.tar.gz", backupDir, timeString)
+
+	tarballFile, err := os.Create(tarballName)
+	if err != nil {
+		return err
+	}
+	defer tarballFile.Close()
+
+	gzipWriter := tar.NewWriter(tarballFile)
+	defer gzipWriter.Close()
+
+	dbBackup, err := os.Open(file)
+	if err != nil {
+		return err
+	}
+	defer dbBackup.Close()
+
+	dbBackupStats, err := dbBackup.Stat()
+	if err != nil {
+		return err
+	}
+
+	header, err := tar.FileInfoHeader(dbBackupStats, "")
+	if err != nil {
+		return err
+	}
+	header.Name = dbBackupStats.Name()
+
+	if err := gzipWriter.WriteHeader(header); err != nil {
+		return err
+	}
+	if _, err := io.Copy(gzipWriter, dbBackup); err != nil {
+		return err
+	}
+
+	dbBackup.Close()
+	if err = os.Remove(file); err != nil {
+		return err
+	}
+
+	folderPath := config.UploadDir
+	baseUploadDir := filepath.Base(filepath.Clean(folderPath))
+	err = filepath.Walk(folderPath, func(filePath string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if filePath == folderPath {
+			return nil
+		}
+
+		file, err := os.Open(filePath)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+
+		header, err := tar.FileInfoHeader(info, "")
+		if err != nil {
+			return err
+		}
+
+		relPath, err := filepath.Rel(folderPath, filePath)
+		if err != nil {
+			return err
+		}
+		header.Name = baseUploadDir + "/" + strings.Replace(relPath, "\\", "/", -1)
+
+		if err := gzipWriter.WriteHeader(header); err != nil {
+			return err
+		}
+
+		if _, err := io.Copy(gzipWriter, file); err != nil {
+			return err
+		}
+
+		return nil
+	})
+
 	return err
 }

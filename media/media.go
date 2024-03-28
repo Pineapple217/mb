@@ -16,17 +16,16 @@ import (
 	"github.com/Pineapple217/mb/database"
 )
 
-const UploadDir = config.DataDir + "/uploads"
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 var invalidCharsR = regexp.MustCompile(`[^\w\s-.]+`)
 
 func CreateUploadDir() {
-	if _, err := os.Stat(UploadDir); os.IsNotExist(err) {
-		err := os.Mkdir(UploadDir, 0755)
+	if _, err := os.Stat(config.UploadDir); os.IsNotExist(err) {
+		err := os.Mkdir(config.UploadDir, 0755)
 		if err != nil {
 			slog.Error("Failed to create directory",
-				"dir", UploadDir,
+				"dir", config.UploadDir,
 				"error", err,
 			)
 			return
@@ -53,14 +52,14 @@ func SaveFile(ctx context.Context, f *multipart.FileHeader, customName string) e
 
 	// Destination
 	fPath := makeValidFileName(name) + "." + ext
-	fPathFull := filepath.Join(UploadDir, fPath)
+	fPathFull := filepath.Join(config.UploadDir, fPath)
 
 	_, err = os.Stat(fPathFull)
 
 	i := 0
 	for !os.IsNotExist(err) && i < 100 {
 		fPath = makeValidFileName(name) + "_" + generateRandom(3) + "." + ext
-		fPathFull = filepath.Join(UploadDir, fPath)
+		fPathFull = filepath.Join(config.UploadDir, fPath)
 		_, err = os.Stat(fPathFull)
 		i++
 	}
@@ -101,7 +100,7 @@ func SaveFile(ctx context.Context, f *multipart.FileHeader, customName string) e
 }
 
 func DeleteFile(filename string) error {
-	f := filepath.Join(UploadDir, filename)
+	f := filepath.Join(config.UploadDir, filename)
 	err := os.Remove(f)
 	if os.IsNotExist(err) {
 		slog.Warn("File to delete not found", "file", f)

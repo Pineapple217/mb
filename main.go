@@ -115,7 +115,7 @@ func main() {
 	e.GET("/media", middleware.CheckAuth(handler.Media))
 	e.POST("/media", middleware.CheckAuth(handler.MediaUpload))
 
-	e.Static("/m", media.UploadDir)
+	e.Static("/m", config.UploadDir)
 
 	go func() {
 		if err := e.Start(*listen + *port); err != nil && err != http.ErrServerClosed {

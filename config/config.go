@@ -16,7 +16,8 @@ const (
 	defaultMessage = "Created without any JS."
 	defaultHost    = "http://localhost:3000"
 
-	DataDir = "./data"
+	DataDir   = "./data"
+	UploadDir = DataDir + "/uploads"
 )
 
 var (
