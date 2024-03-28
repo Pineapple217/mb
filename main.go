@@ -93,29 +93,31 @@ func main() {
 
 	//TODO better caching with http headers
 
-	e.Static("/backup", config.BackupDir)
-	e.GET("/backup", middleware.CheckAuth(handler.Backups))
-	e.POST("/backup", middleware.CheckAuth(handler.CreateBackup))
+	a := e.Group("", middleware.CheckAuth)
+
+	a.Static("/backup", config.BackupDir)
+	a.GET("/backup", handler.Backups)
+	a.POST("/backup", handler.CreateBackup)
 
 	e.GET("/auth", handler.AuthForm)
 	e.POST("/auth", handler.Auth)
 
 	e.GET("/post/:xid", handler.Post)
-	e.GET("/post/:xid/edit", middleware.CheckAuth(handler.EditPostForm))
-	e.POST("/post/:xid/edit", middleware.CheckAuth(handler.EditPost))
-	e.GET("/post/:xid/delete", middleware.CheckAuth(handler.DeletePostForm))
-	e.POST("/post/:xid/delete", middleware.CheckAuth(handler.DeletePost))
-	e.POST("/post", middleware.CheckAuth(handler.CreatePost))
+	a.GET("/post/:xid/edit", handler.EditPostForm)
+	a.POST("/post/:xid/edit", handler.EditPost)
+	a.GET("/post/:xid/delete", handler.DeletePostForm)
+	a.POST("/post/:xid/delete", handler.DeletePost)
+	a.POST("/post", handler.CreatePost)
 	e.GET("/", handler.Posts)
 
 	e.GET("/media/t/:name", handler.Thumbnail)
 	e.GET("/media/:id", handler.Mediafile)
-	e.GET("/media/:id/edit", middleware.CheckAuth(handler.MediaEditForm))
-	e.POST("/media/:id/edit", middleware.CheckAuth(handler.MediaEdit))
-	e.GET("/media/:id/delete", middleware.CheckAuth(handler.MediaDeleteForm))
-	e.POST("/media/:id/delete", middleware.CheckAuth(handler.MediaDelete))
-	e.GET("/media", middleware.CheckAuth(handler.Media))
-	e.POST("/media", middleware.CheckAuth(handler.MediaUpload))
+	a.GET("/media/:id/edit", handler.MediaEditForm)
+	a.POST("/media/:id/edit", handler.MediaEdit)
+	a.GET("/media/:id/delete", handler.MediaDeleteForm)
+	a.POST("/media/:id/delete", handler.MediaDelete)
+	a.GET("/media", handler.Media)
+	a.POST("/media", handler.MediaUpload)
 
 	e.Static("/m", config.UploadDir)
 
