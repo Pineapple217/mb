@@ -1,0 +1,21 @@
+package view
+
+templ Backups(bs []string) {
+	@boiler() {
+		<link rel="stylesheet" href="/static/css/main.css"/>
+		<body>
+			@header()
+			<hr color="gray"/>
+			<form action="/backup" method="post">
+				<input type="submit" id="submit_p" tabindex="1"/>
+				<label for="submit_p">[ create backup ]</label>
+			</form>
+			<hr color="gray"/>
+			for _, b := range(bs) {
+				<p>
+					<a href={ templ.URL("/backup/" + b) } target="_blank">{ b }</a>
+				</p>
+			}
+		</body>
+	}
+}

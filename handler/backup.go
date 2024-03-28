@@ -4,19 +4,25 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/Pineapple217/mb/database"
+	"github.com/Pineapple217/mb/backup"
+	"github.com/Pineapple217/mb/view"
 	"github.com/labstack/echo/v4"
 )
 
 func CreateBackup(c echo.Context) error {
-	queries := database.GetQueries()
-	err := queries.Backup(c.Request().Context())
+	err := backup.Backup(c.Request().Context())
 	if err != nil {
 		slog.Error(err.Error())
 		return err
 	}
 
-	return c.Redirect(http.StatusSeeOther, "/")
+	return c.Redirect(http.StatusSeeOther, "/backup")
 }
 
-// TODO download backups menu
+func Backups(c echo.Context) error {
+	b, err := backup.GetAllBackups()
+	if err != nil {
+		return err
+	}
+	return render(c, view.Backups(b))
+}

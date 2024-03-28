@@ -93,7 +93,9 @@ func main() {
 
 	//TODO better caching with http headers
 
-	e.GET("/backup", middleware.CheckAuth(handler.CreateBackup))
+	e.Static("/backup", config.BackupDir)
+	e.GET("/backup", middleware.CheckAuth(handler.Backups))
+	e.POST("/backup", middleware.CheckAuth(handler.CreateBackup))
 
 	e.GET("/auth", handler.AuthForm)
 	e.POST("/auth", handler.Auth)

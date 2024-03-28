@@ -18,6 +18,7 @@ const (
 
 	DataDir   = "./data"
 	UploadDir = DataDir + "/uploads"
+	BackupDir = DataDir + `/backups`
 )
 
 var (
