@@ -1,22 +1,34 @@
 package handler
 
 import (
-	"log/slog"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/Pineapple217/mb/config"
 	"github.com/labstack/echo/v4"
 )
 
+const robotFile = `User-agent: *
+Allow: /
+Allow: /media/t/*
+Allow: /media/*$
+Allow: /post/*
+Allow: /?page=*
+Disallow: /?*$
+Disallow: /backup
+Disallow: /auth
+Disallow: /media
+Disallow: /media/*/*
+Disallow: /post/*/*
+
+User-agent: Googlebot-Image
+Disallow: /
+
+Sitemap: ##SITEMAP##
+`
+
 func RobotTxt(c echo.Context) error {
-	data, err := os.ReadFile("static/private/robot.txt")
-	if err != nil {
-		slog.Warn("could not server robot file", "error", err)
-		return err
-	}
 	sitemap := config.Host + "/index.xml"
-	r := strings.Replace(string(data), "##SITEMAP##", sitemap, -1)
+	r := strings.Replace(robotFile, "##SITEMAP##", sitemap, -1)
 	return c.String(http.StatusOK, r)
 }
