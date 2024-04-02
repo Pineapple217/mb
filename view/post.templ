@@ -18,7 +18,7 @@ templ postBase(post database.Post, selected bool) {
 			@templ.Raw(UnixTimeToHTMLDateTime(post.CreatedAt))
 			<p class="s">{ " #" +  strconv.FormatInt(post.CreatedAt, 10) + " " }</p>
 			<div class="r">
-				<a href={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10)) }>[share]</a>
+				<a href={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10)) } rel="canonical">[share]</a>
 				if ct.IsAuth(ctx) {
 					<a href={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/edit") } title="edit">[e]</a>
 					<a href={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/delete") } title="delete">[x]</a>
@@ -47,14 +47,14 @@ templ Post(post database.Post, tags []database.GetAllTagsRow) {
 
 templ DeletePost(post database.Post) {
 	@Base([]database.GetAllTagsRow(nil)) {
-		<form action={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/delete") } method="POST">
-			<p class="s">Are you sure you want to delete this post? </p>
-			<input type="hidden" value={ strconv.FormatInt(post.CreatedAt, 10) } name="xid"/>
-			<input type="submit" id="submit_d" tabindex="1"/>
-			<label for="submit_d">[ delete ]</label>
-		</form>
-		@postBase(post, false)
-	}
+			<form action={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/delete") } method="POST">
+				<p class="s">Are you sure you want to delete this post? </p>
+				<input type="hidden" value={ strconv.FormatInt(post.CreatedAt, 10) } name="xid"/>
+				<input type="submit" id="submit_d" tabindex="1"/>
+				<label for="submit_d">[ delete ]</label>
+			</form>
+			@postBase(post, false)
+		}
 }
 
 templ Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Component, selected int64) {
@@ -78,12 +78,12 @@ templ Nav(page int, maxPage int, query string) {
 		<div>
 			if page != 0 {
 				<a href={ templ.URL("/?page=0" + query) }>←← First</a>
-				<a href={ templ.URL("/?page=" + strconv.Itoa(page-1) + query) }>← Previous</a>
+				<a href={ templ.URL("/?page=" + strconv.Itoa(page-1) + query) } rel="prev">← Previous</a>
 			}
 		</div>
 		<div>
 			if page != maxPage {
-				<a href={ templ.URL("/?page=" + strconv.Itoa(page+1) + query) }>Next →</a>
+				<a href={ templ.URL("/?page=" + strconv.Itoa(page+1) + query) } rel="next">Next →</a>
 				<a href={ templ.URL("/?page=" + strconv.Itoa(maxPage) + query) }>Last →→</a>
 			}
 		</div>

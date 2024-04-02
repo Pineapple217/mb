@@ -91,6 +91,8 @@ func main() {
 
 	e.GET("/index.xml", rss.RSSFeed)
 
+	e.GET("robot.txt", handler.RobotTxt)
+
 	//TODO better caching with http headers
 
 	a := e.Group("", middleware.CheckAuth)

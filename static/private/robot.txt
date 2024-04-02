@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Allow: /media/t/*
+Allow: /media/*$
+Allow: /post/*
+Allow: /?page=*
+Disallow: /?*$
+Disallow: /backup
+Disallow: /auth
+Disallow: /media
+Disallow: /media/*/*
+Disallow: /post/*/*
+
+User-agent: Googlebot-Image
+Disallow: /
+
+Sitemap: https://mb.pine32.be/index.xml

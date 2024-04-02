@@ -3,7 +3,7 @@ module github.com/Pineapple217/mb
 go 1.22
 
 require (
-	github.com/a-h/templ v0.2.598
+	github.com/a-h/templ v0.2.648
 	github.com/gomarkdown/markdown v0.0.0-20231222211730-1d6d20845b47
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.11.4

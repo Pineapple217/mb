@@ -25,9 +25,9 @@ templ boiler() {
 			<link rel="manifest" href="/static/site.webmanifest"/>
 			<title>mb</title>
 		</head>
-		<a href="/auth" accesskey="a"></a>
-		<a href="/media" accesskey="m"></a>
-		<a href="/backup" accesskey="b"></a>
+		<a href="/auth" accesskey="a" aria-hidden="true" tabindex="-1"></a>
+		<a href="/media" accesskey="m" aria-hidden="true" tabindex="-1"></a>
+		<a href="/backup" accesskey="b" aria-hidden="true" tabindex="-1"></a>
 		{ children... }
 	</html>
 }
@@ -101,21 +101,21 @@ templ search(tags []database.GetAllTagsRow) {
 // }
 templ EditPost(post database.Post) {
 	@Base([]database.GetAllTagsRow(nil)) {
-		<br/>
-		<form action={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/edit") } method="POST">
-			<div>
-				<label>
-					tags: <input type="text" name="tags" value={ post.Tags.String } tabindex="1" size="30"/>
-				</label>
-				<input type="submit" id="submit_e" tabindex="3"/>
-				<label for="submit_e">[ save ]</label>
-			</div>
-			<br/>
-			<br/>
-			<textarea name="content" rows={ getRows(post.Content) } tabindex="2">{ post.Content }</textarea>
-			<input type="hidden" value={ strconv.FormatInt(post.CreatedAt, 10) } name="xid"/>
-		</form>
-	}
+					<br/>
+					<form action={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/edit") } method="POST">
+						<div>
+							<label>
+								tags: <input type="text" name="tags" value={ post.Tags.String } tabindex="1" size="30"/>
+							</label>
+							<input type="submit" id="submit_e" tabindex="3"/>
+							<label for="submit_e">[ save ]</label>
+						</div>
+						<br/>
+						<br/>
+						<textarea name="content" rows={ getRows(post.Content) } tabindex="2">{ post.Content }</textarea>
+						<input type="hidden" value={ strconv.FormatInt(post.CreatedAt, 10) } name="xid"/>
+					</form>
+				}
 }
 
 templ createPost() {

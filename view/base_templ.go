@@ -33,7 +33,7 @@ func boiler() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"theme-color\" content=\"#F7208B\"><meta name=\"darkreader-lock\"><link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/static/apple-touch-icon.png\"><link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/static/favicon-32x32.png\"><link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/static/favicon-16x16.png\"><link rel=\"manifest\" href=\"/static/site.webmanifest\"><title>mb</title></head><a href=\"/auth\" accesskey=\"a\"></a> <a href=\"/media\" accesskey=\"m\"></a> <a href=\"/backup\" accesskey=\"b\"></a>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"theme-color\" content=\"#F7208B\"><meta name=\"darkreader-lock\"><link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/static/apple-touch-icon.png\"><link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/static/favicon-32x32.png\"><link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/static/favicon-16x16.png\"><link rel=\"manifest\" href=\"/static/site.webmanifest\"><title>mb</title></head><a href=\"/auth\" accesskey=\"a\" aria-hidden=\"true\" tabindex=\"-1\"></a> <a href=\"/media\" accesskey=\"m\" aria-hidden=\"true\" tabindex=\"-1\"></a> <a href=\"/backup\" accesskey=\"b\" aria-hidden=\"true\" tabindex=\"-1\"></a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -402,7 +402,7 @@ func EditPost(post database.Post) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(post.Content)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\base.templ`, Line: 114, Col: 86}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\base.templ`, Line: 114, Col: 89}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {

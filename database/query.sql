@@ -120,7 +120,6 @@ RETURNING *;
 SELECT thumbnail FROM mediafiles
 WHERE file_path = ? LIMIT 1;
 
--- TODO: dont get thumbnail data un this request
 -- name: GetMediafile :one
 SELECT * FROM mediafiles
 WHERE id = ? LIMIT 1;
