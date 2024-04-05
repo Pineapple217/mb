@@ -68,6 +68,9 @@ func main() {
 
 		},
 	}))
+	e.Use(echoMw.GzipWithConfig(echoMw.GzipConfig{
+		Level: 5,
+	}))
 
 	echo.NotFoundHandler = handler.NotFound
 	e.Use(middleware.Stats)
