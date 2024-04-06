@@ -1,4 +1,3 @@
-/* TODO: nice looking scroll bar and prevent scrollbar popping */
 :root {
     --logo-color: #d5d5d5;
     --text-color: #ababab;
@@ -10,6 +9,9 @@
     --light-pink: #ff7a7a;
     --border: #594e4e;
     --spotify-green: #1ed760;
+
+    color-scheme: dark;
+    scrollbar-gutter: stable;
 }
 @font-face {
     font-family: 'Terminus (TTF)';
