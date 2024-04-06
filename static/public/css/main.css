@@ -296,7 +296,6 @@ nav {
 audio {
     width: 100%;
     max-height: 3em;
-    border: 2px dotted var(--border);
 }
 
 /** remove the ugly rounded border */
@@ -357,6 +356,8 @@ audio::-webkit-media-controls-time-remaining-display,
 audio::-webkit-media-controls-current-time-display {
     text-shadow: none;
 }
+
+
 
 #notfound {
     display: flex;
