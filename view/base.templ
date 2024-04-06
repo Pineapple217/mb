@@ -9,8 +9,7 @@ import (
 	"github.com/Pineapple217/mb/config"
 )
 
-// TODO: meta data
-templ boiler() {
+templ boiler(desc string) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -19,6 +18,9 @@ templ boiler() {
 			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 			<meta name="theme-color" content="#F7208B"/>
 			<meta name="darkreader-lock"/>
+			if desc != "" {
+				<meta name="description" content={ desc }/>
+			}
 			<link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png"/>
 			<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png"/>
 			<link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png"/>
@@ -55,8 +57,8 @@ templ header() {
 	</div>
 }
 
-templ Base(tags []database.GetAllTagsRow) {
-	@boiler() {
+templ Base(desc string, tags []database.GetAllTagsRow) {
+	@boiler(desc) {
 		<body>
 			@header()
 			<hr color="gray"/>
@@ -100,7 +102,7 @@ templ search(tags []database.GetAllTagsRow) {
 // 	return fmt.Sprintf("font-size: %fem;", 2.0 - float64(tag.TagCount) * 0.02)
 // }
 templ EditPost(post database.Post) {
-	@Base([]database.GetAllTagsRow(nil)) {
+	@Base("", []database.GetAllTagsRow(nil)) {
 		<br/>
 		<form action={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/edit") } method="POST">
 			<div>

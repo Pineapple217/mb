@@ -11,6 +11,7 @@ import "io"
 import "bytes"
 
 import (
+	"database/sql"
 	ct "github.com/Pineapple217/mb/context"
 	"github.com/Pineapple217/mb/database"
 	"strconv"
@@ -55,7 +56,7 @@ func postBase(post database.Post, selected bool) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(" #" + strconv.FormatInt(post.CreatedAt, 10) + " ")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\post.templ`, Line: 18, Col: 69}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\post.templ`, Line: 19, Col: 69}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -106,7 +107,7 @@ func postBase(post database.Post, selected bool) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("[ " + strings.Replace(post.Tags.String, " ", " | ", -1) + " ]")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\post.templ`, Line: 28, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\post.templ`, Line: 29, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -120,7 +121,7 @@ func postBase(post database.Post, selected bool) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\post.templ`, Line: 30, Col: 7}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view\post.templ`, Line: 31, Col: 7}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -143,6 +144,13 @@ func postBase(post database.Post, selected bool) templ.Component {
 		}
 		return templ_7745c5c3_Err
 	})
+}
+
+func getTagsOrEmpty(s sql.NullString) string {
+	if s.Valid {
+		return s.String
+	}
+	return ""
 }
 
 func Post(post database.Post, tags []database.GetAllTagsRow) templ.Component {
@@ -186,7 +194,7 @@ func Post(post database.Post, tags []database.GetAllTagsRow) templ.Component {
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = Base(tags).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Base(getTagsOrEmpty(post.Tags), tags).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -246,7 +254,7 @@ func DeletePost(post database.Post) templ.Component {
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = Base([]database.GetAllTagsRow(nil)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Base("", []database.GetAllTagsRow(nil)).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -310,7 +318,7 @@ func Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Compo
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = Base(tags).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Base(ct.GetPostCountStr(ctx)+" posts with "+strconv.Itoa(len(tags))+" unique tags", tags).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
