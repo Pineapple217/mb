@@ -20,6 +20,8 @@ func AuthForm(c echo.Context) error {
 	return render(c, view.AuthForm(r))
 }
 
+// TODO: keep redirect afther giving wrong password
+
 func Auth(c echo.Context) error {
 	pw := c.FormValue("auth")
 	if pw != auth.SecretPassword {

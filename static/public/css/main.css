@@ -1,4 +1,16 @@
 /* TODO: nice looking scroll bar and prevent scrollbar popping */
+:root {
+    --logo-color: #d5d5d5;
+    --text-color: #ababab;
+    --header-text-color: #838383;
+    --background-color: #181818;
+    --card-background-color: #1a1a1a;
+    --red: #ff2323;
+    --pink: #e571f0;
+    --light-pink: #ff7a7a;
+    --border: #594e4e;
+    --spotify-green: #1ed760;
+}
 @font-face {
     font-family: 'Terminus (TTF)';
     src: url('/static/fonts/TerminusTTF.woff2') format('woff2');
@@ -11,42 +23,49 @@ html, code, input, textarea {
 }
 
 body {
-    background-color: #1d1e1e;
+    background-color: var(--background-color);
     max-width: 45rem;
     word-wrap: break-word;
     margin-left: auto;
     margin-right: auto;
 }
+ body.auth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    max-width: none;
+ }
 
 h1 {
     font-size: 2em;
 }
 
 p, label, input, textarea, details, ul, li, h1, h2, h3, h4, h5, h6 {
-    color: #938C81;
+    color: var(--text-color);
 }
 
-/* TODO: higher contrast colour scheme */
 article {
-    background-color: rgb(33, 31, 32);
-    border: solid 2px rgb(130, 122, 111);
+    background-color: var(--card-background-color);
+    border: solid 2px var(--text-color);
     margin: 1em;
     padding: 1em;
 }
 
 .lat {
-    border-color: #F7208B;
+    border-color: var(--pink);
     border-style: dotted;
 
 }
 
 article:hover {
-    border-color: #923B2C;
+    color: var(--border);
     border-style: dotted;
 }
 
 header {
-    color: grey;
+    color: var(--header-text-color);
     padding: 1em;
 }
 
@@ -64,7 +83,7 @@ br {
 .cnt {
     display: flex;
     justify-content: space-between;
-    color: #b3b8c3;
+    color: var(--logo-color);
 }
 
 .cc {
@@ -77,12 +96,12 @@ br {
 }
 
 a, .s {
-    color: #FF0000;
+    color: var(--red);
     display: inline;
 }
 
 label strong, .cl {
-    color: #FF8B8B;
+    color: var(--light-pink);
 }
 
 label, summary {
@@ -91,6 +110,12 @@ label, summary {
 
 label {
     white-space: nowrap;
+}
+
+input[type=password] {
+    border: solid 2px var(--border);
+    background-color: inherit;
+    border-style: dotted;
 }
 
 input[type=checkbox] {
@@ -110,7 +135,7 @@ input[type=checkbox] {
 }
 
 input[type=search], input[type=text], textarea {
-    border: solid 2px #923B2C;
+    border: solid 2px var(--border);
     background-color: inherit;
     border-style: dotted;
 }
@@ -165,8 +190,8 @@ figure {
 }
 
 .spc {
-    border-top: 1px dotted #1ed760;
-    border-bottom: 1px dotted #1ed760;
+    border-top: 1px dotted var(--spotify-green);
+    border-bottom: 1px dotted var(--spotify-green);
     display: grid;
     grid-template-columns: minmax(135px, 25%) auto;
     grid-template-rows: auto auto;
@@ -175,8 +200,8 @@ figure {
 .ytc {
     display: flex;
     justify-content: center;
-    border-top: 1px dotted #FF0000;
-    border-bottom: 1px dotted #FF0000;
+    border-top: 1px dotted var(--red);
+    border-bottom: 1px dotted var(--red);
 }
 
 .yti {
@@ -185,7 +210,7 @@ figure {
 }
 
 .ytw {
-    color: #FF0000;
+    color: var(--red);
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -194,7 +219,7 @@ figure {
 }
 
 .scw {
-    color: #1ed760;
+    color: var(--spotify-green);
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -203,7 +228,7 @@ figure {
 }
 
 .scw a {
-    color: #1ed760;
+    color: var(--spotify-green);
     max-height: 1em;
 }
 
@@ -247,7 +272,7 @@ pre {
 }
 
 code {
-    color: #e571f0;
+    color: var(--pink);
     tab-size: 4;
 }
 
@@ -256,7 +281,7 @@ code:not(pre code):before, code:not(pre code):after {
 }
 
 kbd {
-    color: #e571f0;
+    color: var(--pink);
 }
 
 :focus {
@@ -271,6 +296,7 @@ nav {
 audio {
     width: 100%;
     max-height: 3em;
+    border: 2px dotted var(--border);
 }
 
 /** remove the ugly rounded border */
@@ -283,8 +309,8 @@ audio::-webkit-media-controls-enclosure {
 /** change the tap color so its ok on mobile + change text color */
 audio::-webkit-media-controls-volume-slider,
 audio::-webkit-media-controls-mute-button {
-    -webkit-tap-highlight-color: white !important;
-    color: white !important;
+    -webkit-tap-highlight-color: var(--text-color) !important;
+    color: var(--text-color) !important;
 }
 
 /** flip the colors forcefully using a filter */
@@ -305,13 +331,13 @@ audio::-webkit-media-controls-timeline {
 }
 
 audio::-webkit-media-controls-panel {
-    background: #1d1e1e;
+    background: var(--card-background-color);
     border-radius: 0;
     border: none;
 }
 
 audio::-webkit-media-controls-timeline {
-    color: white !important;
+    color: var(--text-color) !important;
     filter: brightness(0) invert(1);
 }
 
@@ -322,7 +348,7 @@ audio::-webkit-media-controls-volume-slider,
 audio::-webkit-media-controls-volume-control-container,
 audio::-webkit-media-controls-mute-button {
     filter: brightness(0) invert(1);
-    color: white;
+    color: var(--text-color);
     opacity: 1;
 }
 

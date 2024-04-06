@@ -2,8 +2,7 @@ package view
 
 templ AuthForm(redirect string) {
 	@boiler() {
-		<link rel="stylesheet" href="/static/css/auth.css"/>
-		<body>
+		<body class="auth">
 			<form action="/auth" method="POST">
 				<input type="hidden" value={ redirect } name="redirect"/>
 				<label>
