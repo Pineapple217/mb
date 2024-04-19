@@ -381,7 +381,7 @@ func mediaBase(media database.Mediafile, deleteButton bool, editMode bool) templ
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" tabindex=\"1\" size=\"30\" autofocus></label> <input type=\"submit\" id=\"submit_p\" tabindex=\"2\"> <label for=\"submit_p\">[ edit ]</label></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" tabindex=\"1\" size=\"30\" autofocus></label> <input type=\"submit\" id=\"submit_e\" tabindex=\"2\"> <label for=\"submit_e\">[ edit ]</label></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

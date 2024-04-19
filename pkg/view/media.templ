@@ -108,8 +108,8 @@ templ mediaBase(media database.Mediafile, deleteButton bool, editMode bool) {
 					<label>
 						name: <input type="text" name="name" value={ media.FileName } tabindex="1" size="30" autofocus/>
 					</label>
-					<input type="submit" id="submit_p" tabindex="2"/>
-					<label for="submit_p">[ edit ]</label>
+					<input type="submit" id="submit_e" tabindex="2"/>
+					<label for="submit_e">[ edit ]</label>
 				</form>
 			} else {
 				<h1>{ media.FileName }</h1>
