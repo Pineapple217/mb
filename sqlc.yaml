@@ -5,14 +5,14 @@ cloud:
   hostname: ""
 sql:
   - engine: "sqlite"
-    queries: "database/query.sql"
-    schema: "database/schema.sql"
+    queries: "pkg/database/query.sql"
+    schema: "pkg/database/schema.sql"
     database:
       uri: "file:database.db"
     gen:
       go:
         package: "database"
-        out: "database"
+        out: "pkg/database"
 overrides:
   go: null
 plugins: []

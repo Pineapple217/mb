@@ -5,10 +5,10 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "tmp\\main.exe"
-  cmd = "go build -o ./tmp/main.exe -tags sqlite_math_functions ."
+  cmd = "go build -o ./tmp/main.exe -tags sqlite_math_functions ./cmd/server"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata", "data"]
-  exclude_file = ["database\\models.go", "database\\query.sql.go"]
+  exclude_file = ["pkg\\database\\models.go", "pkg\\database\\query.sql.go"]
   exclude_regex = ["_test.go", ".*_templ.go", ".*.db"]
   exclude_unchanged = false
   follow_symlink = false
