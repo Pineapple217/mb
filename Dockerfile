@@ -17,6 +17,10 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
 
 FROM alpine:latest AS final
 
+ARG GIT_COMMIT=unspecified
+LABEL org.opencontainers.image.version=$GIT_COMMIT
+LABEL org.opencontainers.image.source=https://github.com/Pineapple217/mb
+
 # Removed user because of file permisions
 # ARG UID=10001
 # RUN adduser \
