@@ -11,6 +11,7 @@ import (
 )
 
 func (s *Server) ApplyMiddleware(q *database.Queries) {
+	slog.Info("Applying middlewares")
 	s.e.Use(echoMw.RequestLoggerWithConfig(echoMw.RequestLoggerConfig{
 		LogStatus:  true,
 		LogURI:     true,

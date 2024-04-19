@@ -21,6 +21,7 @@ type Server struct {
 }
 
 func NewServer() *Server {
+	slog.Info("Creating server")
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true

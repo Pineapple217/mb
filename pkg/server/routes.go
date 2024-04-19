@@ -2,6 +2,7 @@ package server
 
 import (
 	"embed"
+	"log/slog"
 	"time"
 
 	"github.com/Pineapple217/mb/pkg/config"
@@ -16,6 +17,7 @@ var (
 )
 
 func (server *Server) RegisterRoutes(hdlr *handler.Handler) {
+	slog.Info("Registering routes")
 	e := server.e
 
 	s := e.Group("/static")

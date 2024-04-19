@@ -21,7 +21,7 @@ const banner = `
 ▀▀  █▪▀▀▀·▀▀▀▀	v0.6.1
 Minimal blog with no JavaScript
 https://github.com/Pineapple217/mb/pkg
----------------------------------------------------`
+-----------------------------------------------------------------------------`
 
 func main() {
 	slog.SetDefault(slog.New(slog.Default().Handler()))
@@ -30,19 +30,14 @@ func main() {
 	CreateDataDir()
 	media.CreateUploadDir()
 
-	fmt.Println("Loading database...")
+	config.Load()
+
 	q := database.NewQueries("file:" + config.DataDir + "/database.db")
 	h := handler.NewHandler(q)
 
 	server := server.NewServer()
 	server.RegisterRoutes(h)
 	server.ApplyMiddleware(q)
-
-	fmt.Println("Loading configs...")
-	config.Load()
-	fmt.Println("Loading middlewares...")
-
-	// e.Static("/static", "./static/public")
 
 	server.Start()
 

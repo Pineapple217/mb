@@ -1,7 +1,7 @@
 package config
 
 import (
-	"fmt"
+	"log/slog"
 	"os"
 	"time"
 
@@ -31,16 +31,17 @@ var (
 )
 
 func Load() {
+	slog.Info("Loading configs")
 	err := godotenv.Load()
 	if err != nil {
-		fmt.Println("No .env file found")
+		slog.Info("No .env file found")
 	}
 	password, isSet := os.LookupEnv("MB_AUTH_PASSWORD")
 	if !isSet {
-		fmt.Println("AUHT_PASSWORD is not set. Using random password")
-		fmt.Printf("Auth password: %s\n", auth.SecretPassword)
+		slog.Info("AUHT_PASSWORD is not set. Using random password")
+		slog.Info("Random password generated", "password", auth.SecretPassword)
 	} else {
-		fmt.Println("Auth password succesfully set")
+		slog.Info("Auth password succesfully set")
 		auth.SecretPassword = password
 
 	}

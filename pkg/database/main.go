@@ -23,6 +23,7 @@ var (
 )
 
 func NewQueries(databaseSource string) *Queries {
+	slog.Info("Creating database connection")
 	ctx := context.Background()
 
 	if _, err := os.Stat(config.BackupDir); os.IsNotExist(err) {
