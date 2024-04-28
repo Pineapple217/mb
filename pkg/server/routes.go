@@ -47,6 +47,7 @@ func (server *Server) RegisterRoutes(hdlr *handler.Handler) {
 	e.POST("/auth", hdlr.Auth)
 
 	e.GET("/post/:xid", hdlr.Post)
+	e.GET("post/latest", hdlr.PostLatest)
 	a.GET("/post/:xid/edit", hdlr.EditPostForm)
 	a.POST("/post/:xid/edit", hdlr.EditPost)
 	a.GET("/post/:xid/delete", hdlr.DeletePostForm)

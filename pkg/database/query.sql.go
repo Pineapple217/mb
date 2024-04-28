@@ -283,6 +283,23 @@ func (q *Queries) GetPostCount(ctx context.Context) (int64, error) {
 	return count, err
 }
 
+const getPostLatest = `-- name: GetPostLatest :one
+SELECT id, created_at, tags, content FROM posts
+ORDER BY created_at DESC LIMIT 1
+`
+
+func (q *Queries) GetPostLatest(ctx context.Context) (Post, error) {
+	row := q.db.QueryRowContext(ctx, getPostLatest)
+	var i Post
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.Tags,
+		&i.Content,
+	)
+	return i, err
+}
+
 const getPostPage = `-- name: GetPostPage :one
 SELECT 
     CAST(

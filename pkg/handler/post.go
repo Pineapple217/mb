@@ -198,3 +198,15 @@ func (h *Handler) Posts(c echo.Context) error {
 		return render(c, view.Posts(posts, tags, nav, -1, h.Q))
 	}
 }
+
+func (h *Handler) PostLatest(c echo.Context) error {
+	post, err := h.Q.GetPostLatest(c.Request().Context())
+	if err != nil {
+		return err
+	}
+	tags, err := h.Q.GetAllTags(c.Request().Context())
+	if err != nil {
+		return err
+	}
+	return render(c, view.Post(post, tags, h.Q))
+}

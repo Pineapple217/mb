@@ -2,6 +2,10 @@
 SELECT * FROM posts
 WHERE created_at = ? LIMIT 1;
 
+-- name: GetPostLatest :one
+SELECT * FROM posts
+ORDER BY created_at DESC LIMIT 1;
+
 -- name: ListPosts :many
 SELECT * FROM posts
 ORDER BY created_at DESC;
