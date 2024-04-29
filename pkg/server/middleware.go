@@ -2,6 +2,7 @@ package server
 
 import (
 	"log/slog"
+	"time"
 
 	"github.com/Pineapple217/mb/pkg/database"
 	"github.com/Pineapple217/mb/pkg/handler"
@@ -27,6 +28,12 @@ func (s *Server) ApplyMiddleware(q *database.Queries) {
 			return nil
 
 		},
+	}))
+
+	s.e.Use(echoMw.RateLimiterWithConfig(echoMw.RateLimiterConfig{
+		Store: echoMw.NewRateLimiterMemoryStoreWithConfig(
+			echoMw.RateLimiterMemoryStoreConfig{Rate: 10, Burst: 30, ExpiresIn: 3 * time.Minute},
+		),
 	}))
 
 	s.e.Use(echoMw.GzipWithConfig(echoMw.GzipConfig{
