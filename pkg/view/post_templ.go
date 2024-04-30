@@ -289,7 +289,7 @@ func Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Compo
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			templ_7745c5c3_Err = nav().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = nav.Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

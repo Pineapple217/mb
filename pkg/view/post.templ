@@ -67,7 +67,7 @@ templ DeletePost(post database.Post, q *database.Queries) {
 
 templ Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Component, selected int64, q *database.Queries) {
 	@Base(ct.GetPostCountStr(ctx)+" posts with "+strconv.Itoa(len(tags))+" unique tags", tags) {
-		@nav()
+		@nav
 		for _, post := range(posts) {
 			if post.CreatedAt == selected {
 				@postBase(post, q, true)
