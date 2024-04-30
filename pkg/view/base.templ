@@ -102,7 +102,7 @@ templ search(tags []database.GetAllTagsRow) {
 // 	return fmt.Sprintf("font-size: %fem;", 2.0 - float64(tag.TagCount) * 0.02)
 // }
 templ EditPost(post database.Post) {
-	@Base("", []database.GetAllTagsRow(nil)) {
+	@Base("", []database.GetAllTagsRow{}) {
 		<br/>
 		<form action={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/edit") } method="POST">
 			<div>

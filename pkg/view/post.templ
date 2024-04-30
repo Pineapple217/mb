@@ -54,7 +54,7 @@ templ Post(post database.Post, tags []database.GetAllTagsRow, q *database.Querie
 }
 
 templ DeletePost(post database.Post, q *database.Queries) {
-	@Base("", []database.GetAllTagsRow(nil)) {
+	@Base("", []database.GetAllTagsRow{}) {
 		<form action={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/delete") } method="POST">
 			<p class="s">Are you sure you want to delete this post? </p>
 			<input type="hidden" value={ strconv.FormatInt(post.CreatedAt, 10) } name="xid"/>
@@ -67,7 +67,7 @@ templ DeletePost(post database.Post, q *database.Queries) {
 
 templ Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Component, selected int64, q *database.Queries) {
 	@Base(ct.GetPostCountStr(ctx)+" posts with "+strconv.Itoa(len(tags))+" unique tags", tags) {
-		@nav
+		@nav()
 		for _, post := range(posts) {
 			if post.CreatedAt == selected {
 				@postBase(post, q, true)
