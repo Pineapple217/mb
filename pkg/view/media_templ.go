@@ -210,7 +210,7 @@ func uploadMedia() templ.Component {
 			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<details><summary>Upload Media</summary><br><form action=\"/media\" method=\"POST\" enctype=\"multipart/form-data\"><div><label>[ choose file ] <input type=\"file\" accept=\".jpg,.jpeg,.png\" name=\"upload\"></label><br><br><label>name: <input type=\"text\" name=\"name\" value=\"\" tabindex=\"2\" size=\"30\"></label> <input type=\"submit\" id=\"submit_p\" tabindex=\"3\"> <label for=\"submit_p\">[ upload ]</label></div><br></form></details>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<details><summary>Upload Media</summary><br><form action=\"/media\" method=\"POST\" enctype=\"multipart/form-data\"><div><label>[ choose file ] <input type=\"file\" accept=\".jpg,.jpeg,.png,.gif,.bmp\" name=\"upload\"></label><br><br><label>name: <input type=\"text\" name=\"name\" value=\"\" tabindex=\"2\" size=\"30\"></label> <input type=\"submit\" id=\"submit_p\" tabindex=\"3\"> <label for=\"submit_p\">[ upload ]</label></div><br></form></details>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

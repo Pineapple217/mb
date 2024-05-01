@@ -4,9 +4,13 @@ import (
 	"bytes"
 	"fmt"
 	"image"
+
+	_ "image/gif"
 	"image/jpeg"
 	_ "image/png"
 	"io"
+
+	_ "golang.org/x/image/bmp"
 )
 
 const thumbnailSize = 150
