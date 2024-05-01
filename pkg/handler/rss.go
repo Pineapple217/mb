@@ -46,7 +46,7 @@ type Item struct {
 func (h *Handler) RSSFeed(c echo.Context) error {
 	c.Response().Header().Add("Content-Type", "application/rss+xml")
 
-	posts, err := h.Q.ListPosts(c.Request().Context())
+	posts, err := h.Q.ListPublicPosts(c.Request().Context())
 	if err != nil {
 		return err
 	}

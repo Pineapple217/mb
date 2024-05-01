@@ -109,8 +109,11 @@ templ EditPost(post database.Post) {
 				<label>
 					tags: <input type="text" name="tags" value={ post.Tags.String } tabindex="1" size="30"/>
 				</label>
-				<input type="submit" id="submit_e" tabindex="3"/>
-				<label for="submit_e">[ save ]</label>
+				// TODO: checkbox is not selectable
+				<input type="checkbox" name="private" id="private-e" tabindex="3" checked?={ post.Private > 0 }/>
+				<label for="private-e">private</label>
+				<input type="submit" id="submit_e" tabindex="4"/>
+				<label for="submit_e" class="r">[ save ]</label>
 			</div>
 			<br/>
 			<br/>
@@ -129,8 +132,11 @@ templ createPost() {
 				<label>
 					tags: <input type="text" name="tags" value="" tabindex="1" size="30"/>
 				</label>
-				<input type="submit" id="submit_p" tabindex="3"/>
-				<label for="submit_p">[ post ]</label>
+				// TODO: checkbox is not selectable
+				<input type="checkbox" name="private" id="private" tabindex="3"/>
+				<label for="private">private</label>
+				<input type="submit" id="submit_p" tabindex="4"/>
+				<label for="submit_p" class="r">[ post ]</label>
 			</div>
 			<br/>
 			<br/>

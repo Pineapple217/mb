@@ -429,14 +429,24 @@ func EditPost(post database.Post) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" tabindex=\"1\" size=\"30\"></label> <input type=\"submit\" id=\"submit_e\" tabindex=\"3\"> <label for=\"submit_e\">[ save ]</label></div><br><br><textarea name=\"content\" rows=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" tabindex=\"1\" size=\"30\"></label><input type=\"checkbox\" name=\"private\" id=\"private-e\" tabindex=\"3\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if post.Private > 0 {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" checked")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("> <label for=\"private-e\">private</label> <input type=\"submit\" id=\"submit_e\" tabindex=\"4\"> <label for=\"submit_e\" class=\"r\">[ save ]</label></div><br><br><textarea name=\"content\" rows=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(getRows(post.Content))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\base.templ`, Line: 117, Col: 56}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\base.templ`, Line: 120, Col: 56}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 			if templ_7745c5c3_Err != nil {
@@ -449,7 +459,7 @@ func EditPost(post database.Post) templ.Component {
 			var templ_7745c5c3_Var26 string
 			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(post.Content)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\base.templ`, Line: 117, Col: 86}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\base.templ`, Line: 120, Col: 86}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 			if templ_7745c5c3_Err != nil {
@@ -462,7 +472,7 @@ func EditPost(post database.Post) templ.Component {
 			var templ_7745c5c3_Var27 string
 			templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(post.CreatedAt, 10))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\base.templ`, Line: 118, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\base.templ`, Line: 121, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 			if templ_7745c5c3_Err != nil {
@@ -501,7 +511,7 @@ func createPost() templ.Component {
 			templ_7745c5c3_Var28 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<details><summary>New Post</summary><br><form action=\"/post\" method=\"POST\"><div><label>tags: <input type=\"text\" name=\"tags\" value=\"\" tabindex=\"1\" size=\"30\"></label> <input type=\"submit\" id=\"submit_p\" tabindex=\"3\"> <label for=\"submit_p\">[ post ]</label></div><br><br><textarea name=\"content\" rows=\"15\" tabindex=\"2\"></textarea></form></details>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<details><summary>New Post</summary><br><form action=\"/post\" method=\"POST\"><div><label>tags: <input type=\"text\" name=\"tags\" value=\"\" tabindex=\"1\" size=\"30\"></label><input type=\"checkbox\" name=\"private\" id=\"private\" tabindex=\"3\"> <label for=\"private\">private</label> <input type=\"submit\" id=\"submit_p\" tabindex=\"4\"> <label for=\"submit_p\" class=\"r\">[ post ]</label></div><br><br><textarea name=\"content\" rows=\"15\" tabindex=\"2\"></textarea></form></details>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

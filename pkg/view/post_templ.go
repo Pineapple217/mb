@@ -41,6 +41,12 @@ func postBase(post database.Post, q *database.Queries, selected bool) templ.Comp
 				return templ_7745c5c3_Err
 			}
 		}
+		if post.Private > 0 {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" class=\"pr\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("><header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -56,7 +62,7 @@ func postBase(post database.Post, q *database.Queries, selected bool) templ.Comp
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(" #" + strconv.FormatInt(post.CreatedAt, 10) + " ")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\post.templ`, Line: 20, Col: 69}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\post.templ`, Line: 23, Col: 69}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -107,7 +113,7 @@ func postBase(post database.Post, q *database.Queries, selected bool) templ.Comp
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("[ " + strings.Replace(post.Tags.String, " ", " | ", -1) + " ]")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\post.templ`, Line: 30, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\post.templ`, Line: 33, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -121,7 +127,7 @@ func postBase(post database.Post, q *database.Queries, selected bool) templ.Comp
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs("")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\post.templ`, Line: 32, Col: 7}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\post.templ`, Line: 35, Col: 7}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -240,7 +246,7 @@ func DeletePost(post database.Post, q *database.Queries) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(post.CreatedAt, 10))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\post.templ`, Line: 60, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg\view\post.templ`, Line: 63, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {

@@ -51,22 +51,25 @@ func NewQueries(databaseSource string) *Queries {
 	return queries
 }
 
-const queryPosts = `SELECT id, created_at, tags, content FROM posts`
+const queryPosts = `SELECT id, created_at, tags, content, private FROM posts`
 const countPosts = `SELECT COUNT(*) FROM posts`
 const queryPostsOrder = ` ORDER BY created_at DESC`
 
-func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, page int) ([]Post, int, error) {
+func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, pritvate int, page int) ([]Post, int, error) {
 	var filter strings.Builder
+	firstWhere := false
 	if search != "" {
 		filter.WriteString(fmt.Sprintf(" where (LOWER(content) glob '*%s*' collate nocase)",
 			strings.ToLower(search)))
+		firstWhere = true
 	}
 
 	if len(tags) != 0 {
-		if search != "" {
+		if firstWhere {
 			filter.WriteString(" and (")
 		} else {
 			filter.WriteString(" where (")
+			firstWhere = true
 		}
 
 		for i, tag := range tags {
@@ -79,6 +82,17 @@ func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, p
 			}
 		}
 	}
+
+	if pritvate == 0 {
+		if firstWhere {
+			filter.WriteString(" and (")
+		} else {
+			filter.WriteString(" where (")
+			firstWhere = true
+		}
+		filter.WriteString("private = 0)")
+	}
+
 	limit := fmt.Sprintf(" limit %d offset %d", PostsPerPage, PostsPerPage*page)
 	query := queryPosts + filter.String() + queryPostsOrder + limit
 	countQuery := countPosts + filter.String()
@@ -96,6 +110,7 @@ func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, p
 			&i.CreatedAt,
 			&i.Tags,
 			&i.Content,
+			&i.Private,
 		); err != nil {
 			return nil, 0, err
 		}

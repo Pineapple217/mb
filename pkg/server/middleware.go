@@ -41,6 +41,6 @@ func (s *Server) ApplyMiddleware(q *database.Queries) {
 	}))
 
 	echo.NotFoundHandler = handler.NotFound
-	s.e.Use(func(next echo.HandlerFunc) echo.HandlerFunc { return middleware.Stats(next, q) })
 	s.e.Use(middleware.Auth)
+	s.e.Use(func(next echo.HandlerFunc) echo.HandlerFunc { return middleware.Stats(next, q) })
 }

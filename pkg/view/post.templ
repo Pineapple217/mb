@@ -14,6 +14,9 @@ templ postBase(post database.Post, q *database.Queries, selected bool) {
 		if selected {
 			id="#"
 		}
+		if post.Private > 0 {
+			class="pr"
+		}
 	>
 		<header>
 			@templ.Raw(UnixTimeToHTMLDateTime(post.CreatedAt))

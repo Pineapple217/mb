@@ -50,26 +50,28 @@ func (q *Queries) CreateMediafile(ctx context.Context, arg CreateMediafileParams
 
 const createPost = `-- name: CreatePost :one
 INSERT INTO posts (
-  created_at, tags, content
+  created_at, tags, content, private
 ) VALUES (
-  strftime('%s', 'now'), ?, ?
+  strftime('%s', 'now'), ?, ?, ?
 )
-RETURNING id, created_at, tags, content
+RETURNING id, created_at, tags, content, private
 `
 
 type CreatePostParams struct {
 	Tags    sql.NullString
 	Content string
+	Private int64
 }
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, error) {
-	row := q.db.QueryRowContext(ctx, createPost, arg.Tags, arg.Content)
+	row := q.db.QueryRowContext(ctx, createPost, arg.Tags, arg.Content, arg.Private)
 	var i Post
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
 		&i.Tags,
 		&i.Content,
+		&i.Private,
 	)
 	return i, err
 }
@@ -180,6 +182,7 @@ AS (-- Initial query
     SELECT '',
            tags || ' '
       FROM posts
+      WHERE private <= ?
     UNION ALL
     SELECT trim(substr(tags_remaining, 0, instr(tags_remaining, ' ') ) ),
            substr(tags_remaining, instr(tags_remaining, ' ') + 1) 
@@ -199,8 +202,8 @@ type GetAllTagsRow struct {
 	TagCount int64
 }
 
-func (q *Queries) GetAllTags(ctx context.Context) ([]GetAllTagsRow, error) {
-	rows, err := q.db.QueryContext(ctx, getAllTags)
+func (q *Queries) GetAllTags(ctx context.Context, private int64) ([]GetAllTagsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllTags, private)
 	if err != nil {
 		return nil, err
 	}
@@ -255,7 +258,7 @@ func (q *Queries) GetMediafile(ctx context.Context, id int64) (Mediafile, error)
 }
 
 const getPost = `-- name: GetPost :one
-SELECT id, created_at, tags, content FROM posts
+SELECT id, created_at, tags, content, private FROM posts
 WHERE created_at = ? LIMIT 1
 `
 
@@ -267,6 +270,7 @@ func (q *Queries) GetPost(ctx context.Context, createdAt int64) (Post, error) {
 		&i.CreatedAt,
 		&i.Tags,
 		&i.Content,
+		&i.Private,
 	)
 	return i, err
 }
@@ -274,17 +278,19 @@ func (q *Queries) GetPost(ctx context.Context, createdAt int64) (Post, error) {
 const getPostCount = `-- name: GetPostCount :one
 SELECT COUNT(*)
 FROM posts
+WHERE private <= ?
 `
 
-func (q *Queries) GetPostCount(ctx context.Context) (int64, error) {
-	row := q.db.QueryRowContext(ctx, getPostCount)
+func (q *Queries) GetPostCount(ctx context.Context, private int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getPostCount, private)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
 }
 
 const getPostLatest = `-- name: GetPostLatest :one
-SELECT id, created_at, tags, content FROM posts
+SELECT id, created_at, tags, content, private FROM posts
+WHERE private = 0
 ORDER BY created_at DESC LIMIT 1
 `
 
@@ -296,23 +302,29 @@ func (q *Queries) GetPostLatest(ctx context.Context) (Post, error) {
 		&i.CreatedAt,
 		&i.Tags,
 		&i.Content,
+		&i.Private,
 	)
 	return i, err
 }
 
 const getPostPage = `-- name: GetPostPage :one
 SELECT 
-    CAST(
-        CASE 
-            WHEN EXISTS (SELECT 1 FROM posts WHERE posts.created_at = ?1)
-            THEN CEIL((SELECT COUNT(*) FROM posts WHERE posts.created_at >= (SELECT posts.created_at FROM posts WHERE created_at = ?1)) / 25.0) - 1
-            ELSE -1
-        END AS INT
-    ) AS page_number
+CAST(
+    CASE 
+        WHEN EXISTS (SELECT 1 FROM posts WHERE posts.created_at = ?1)
+        THEN CEIL((SELECT COUNT(*) FROM posts WHERE (posts.created_at >= (SELECT posts.created_at FROM posts WHERE created_at = ?1)) and posts.private <= ?2)  / 25.0) - 1
+        ELSE -1
+    END AS INT
+) AS page_number
 `
 
-func (q *Queries) GetPostPage(ctx context.Context, id int64) (int64, error) {
-	row := q.db.QueryRowContext(ctx, getPostPage, id)
+type GetPostPageParams struct {
+	ID int64
+	P  int64
+}
+
+func (q *Queries) GetPostPage(ctx context.Context, arg GetPostPageParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getPostPage, arg.ID, arg.P)
 	var page_number int64
 	err := row.Scan(&page_number)
 	return page_number, err
@@ -336,32 +348,6 @@ func (q *Queries) GetSpotifyCache(ctx context.Context, trackID string) (SpotifyC
 		&i.AudioPreviewUrl,
 	)
 	return i, err
-}
-
-const getTagsCount = `-- name: GetTagsCount :one
-WITH split(tag, tags_remaining) AS (
-  -- Initial query
-  SELECT 
-    '',
-    tags || ' '
-  FROM posts
-  UNION ALL
-  SELECT
-    trim(substr(tags_remaining, 0, instr(tags_remaining, ' '))),
-    substr(tags_remaining, instr(tags_remaining, ' ') + 1)
-  FROM split
-  WHERE tags_remaining != ''
-)
-SELECT COUNT(DISTINCT tag) AS unique_tag_count
-FROM split
-WHERE tag != ''
-`
-
-func (q *Queries) GetTagsCount(ctx context.Context) (int64, error) {
-	row := q.db.QueryRowContext(ctx, getTagsCount)
-	var unique_tag_count int64
-	err := row.Scan(&unique_tag_count)
-	return unique_tag_count, err
 }
 
 const getYoutubeCache = `-- name: GetYoutubeCache :one
@@ -419,13 +405,14 @@ func (q *Queries) ListMediafiles(ctx context.Context) ([]Mediafile, error) {
 	return items, nil
 }
 
-const listPosts = `-- name: ListPosts :many
-SELECT id, created_at, tags, content FROM posts
+const listPublicPosts = `-- name: ListPublicPosts :many
+SELECT id, created_at, tags, content, private FROM posts
+WHERE private = 0
 ORDER BY created_at DESC
 `
 
-func (q *Queries) ListPosts(ctx context.Context) ([]Post, error) {
-	rows, err := q.db.QueryContext(ctx, listPosts)
+func (q *Queries) ListPublicPosts(ctx context.Context) ([]Post, error) {
+	rows, err := q.db.QueryContext(ctx, listPublicPosts)
 	if err != nil {
 		return nil, err
 	}
@@ -438,6 +425,7 @@ func (q *Queries) ListPosts(ctx context.Context) ([]Post, error) {
 			&i.CreatedAt,
 			&i.Tags,
 			&i.Content,
+			&i.Private,
 		); err != nil {
 			return nil, err
 		}
@@ -471,17 +459,24 @@ func (q *Queries) UpdateMedia(ctx context.Context, arg UpdateMediaParams) error 
 const updatePost = `-- name: UpdatePost :exec
 UPDATE posts
 set tags = ?,
-    content = ?
+    content = ?,
+    private = ?
 WHERE created_at = ?
 `
 
 type UpdatePostParams struct {
 	Tags      sql.NullString
 	Content   string
+	Private   int64
 	CreatedAt int64
 }
 
 func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) error {
-	_, err := q.db.ExecContext(ctx, updatePost, arg.Tags, arg.Content, arg.CreatedAt)
+	_, err := q.db.ExecContext(ctx, updatePost,
+		arg.Tags,
+		arg.Content,
+		arg.Private,
+		arg.CreatedAt,
+	)
 	return err
 }

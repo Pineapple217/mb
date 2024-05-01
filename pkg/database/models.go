@@ -24,6 +24,7 @@ type Post struct {
 	CreatedAt int64
 	Tags      sql.NullString
 	Content   string
+	Private   int64
 }
 
 type SpotifyCache struct {

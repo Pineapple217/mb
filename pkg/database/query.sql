@@ -4,24 +4,27 @@ WHERE created_at = ? LIMIT 1;
 
 -- name: GetPostLatest :one
 SELECT * FROM posts
+WHERE private = 0
 ORDER BY created_at DESC LIMIT 1;
 
--- name: ListPosts :many
+-- name: ListPublicPosts :many
 SELECT * FROM posts
+WHERE private = 0
 ORDER BY created_at DESC;
 
 -- name: CreatePost :one
 INSERT INTO posts (
-  created_at, tags, content
+  created_at, tags, content, private
 ) VALUES (
-  strftime('%s', 'now'), ?, ?
+  strftime('%s', 'now'), ?, ?, ?
 )
 RETURNING *;
 
 -- name: UpdatePost :exec
 UPDATE posts
 set tags = ?,
-    content = ?
+    content = ?,
+    private = ?
 WHERE created_at = ?;
 
 -- name: DeletePost :exec
@@ -30,7 +33,8 @@ WHERE created_at = ?;
 
 -- name: GetPostCount :one
 SELECT COUNT(*)
-FROM posts;
+FROM posts
+WHERE private <= ?;
 
 -- name: CreateSpotifyCache :one
 INSERT INTO spotify_cache (
@@ -56,23 +60,6 @@ RETURNING *;
 SELECT * FROM youtube_cache
 WHERE yt_id = ? LIMIT 1;
 
--- name: GetTagsCount :one
-WITH split(tag, tags_remaining) AS (
-  -- Initial query
-  SELECT 
-    '',
-    tags || ' '
-  FROM posts
-  UNION ALL
-  SELECT
-    trim(substr(tags_remaining, 0, instr(tags_remaining, ' '))),
-    substr(tags_remaining, instr(tags_remaining, ' ') + 1)
-  FROM split
-  WHERE tags_remaining != ''
-)
-SELECT COUNT(DISTINCT tag) AS unique_tag_count
-FROM split
-WHERE tag != '';
 
 -- name: GetAllTags :many
 WITH split (
@@ -83,6 +70,7 @@ AS (-- Initial query
     SELECT '',
            tags || ' '
       FROM posts
+      WHERE private <= ?
     UNION ALL
     SELECT trim(substr(tags_remaining, 0, instr(tags_remaining, ' ') ) ),
            substr(tags_remaining, instr(tags_remaining, ' ') + 1) 
@@ -98,14 +86,13 @@ ORDER BY tag_count DESC;
 
 -- name: GetPostPage :one
 SELECT 
-    CAST(
-        CASE 
-            WHEN EXISTS (SELECT 1 FROM posts WHERE posts.created_at = :id)
-            THEN CEIL((SELECT COUNT(*) FROM posts WHERE posts.created_at >= (SELECT posts.created_at FROM posts WHERE created_at = :id)) / 25.0) - 1
-            ELSE -1
-        END AS INT
-    ) AS page_number;
-    
+CAST(
+    CASE 
+        WHEN EXISTS (SELECT 1 FROM posts WHERE posts.created_at = :id)
+        THEN CEIL((SELECT COUNT(*) FROM posts WHERE (posts.created_at >= (SELECT posts.created_at FROM posts WHERE created_at = :id)) and posts.private <= :p)  / 25.0) - 1
+        ELSE -1
+    END AS INT
+) AS page_number;
 
 
 -- name: ListMediafiles :many

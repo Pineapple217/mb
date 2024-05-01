@@ -10,8 +10,13 @@ import (
 
 func Stats(next echo.HandlerFunc, q *database.Queries) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		auth := ct.IsAuth(c.Request().Context())
+		private := 0
+		if auth {
+			private = 1
+		}
 		// post count
-		postCount, err := q.GetPostCount(c.Request().Context())
+		postCount, err := q.GetPostCount(c.Request().Context(), int64(private))
 		if err != nil {
 			postCount = -1
 		}

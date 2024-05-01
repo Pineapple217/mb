@@ -6,12 +6,18 @@ import (
 	"strconv"
 	"strings"
 
+	ct "github.com/Pineapple217/mb/pkg/context"
 	"github.com/Pineapple217/mb/pkg/database"
 	"github.com/Pineapple217/mb/pkg/view"
 	"github.com/labstack/echo/v4"
 )
 
 func (h *Handler) Post(c echo.Context) error {
+	auth := ct.IsAuth(c.Request().Context())
+	private := 0
+	if auth {
+		private = 1
+	}
 	// parse xid
 	xidStr := c.Param("xid")
 	xid, err := strconv.ParseInt(xidStr, 10, 64)
@@ -23,7 +29,7 @@ func (h *Handler) Post(c echo.Context) error {
 	if err != nil {
 		return echo.NotFoundHandler(c)
 	}
-	tags, err := h.Q.GetAllTags(c.Request().Context())
+	tags, err := h.Q.GetAllTags(c.Request().Context(), int64(private))
 	if err != nil {
 		panic(err)
 	}
@@ -43,10 +49,16 @@ func (h *Handler) CreatePost(c echo.Context) error {
 	if content == "" {
 		return c.Redirect(http.StatusSeeOther, "/")
 	}
+	privateStr := strings.TrimSpace(c.FormValue("private"))
+	private := 0
+	if privateStr == "on" {
+		private = 1
+	}
 	// create post
 	h.Q.CreatePost(c.Request().Context(), database.CreatePostParams{
 		Tags:    tagsNS,
 		Content: content,
+		Private: int64(private),
 	})
 
 	return c.Redirect(http.StatusSeeOther, "/")
@@ -84,10 +96,16 @@ func (h *Handler) EditPost(c echo.Context) error {
 	if content == "" {
 		return c.Redirect(http.StatusSeeOther, "/post/"+xidStr)
 	}
+	privateStr := strings.TrimSpace(c.FormValue("private"))
+	private := 0
+	if privateStr == "on" {
+		private = 1
+	}
 	// update in db
 	err = h.Q.UpdatePost(c.Request().Context(), database.UpdatePostParams{
 		Tags:      tagsNS,
 		Content:   content,
+		Private:   int64(private),
 		CreatedAt: xid,
 	})
 	if err != nil {
@@ -135,6 +153,11 @@ func (h *Handler) DeletePost(c echo.Context) error {
 const prefix = "tag_"
 
 func (h *Handler) Posts(c echo.Context) error {
+	auth := ct.IsAuth(c.Request().Context())
+	private := 0
+	if auth {
+		private = 1
+	}
 	// TODO: could be cleaner
 	pStr := c.QueryParam("p")
 	if pStr != "" {
@@ -142,7 +165,10 @@ func (h *Handler) Posts(c echo.Context) error {
 		if err != nil {
 			return c.NoContent(http.StatusNotFound)
 		}
-		page, err := h.Q.GetPostPage(c.Request().Context(), p)
+		page, err := h.Q.GetPostPage(c.Request().Context(), database.GetPostPageParams{
+			ID: p,
+			P:  int64(private),
+		})
 		if err != nil {
 			return err
 		}
@@ -150,13 +176,14 @@ func (h *Handler) Posts(c echo.Context) error {
 			c.Request().Context(),
 			nil,
 			"",
+			private,
 			int(page),
 		)
 		if err != nil {
 			return err
 		}
 
-		tags, err := h.Q.GetAllTags(c.Request().Context())
+		tags, err := h.Q.GetAllTags(c.Request().Context(), int64(private))
 		if err != nil || tags == nil {
 			tags = []database.GetAllTagsRow{}
 		}
@@ -181,13 +208,14 @@ func (h *Handler) Posts(c echo.Context) error {
 			c.Request().Context(),
 			queryTags,
 			c.QueryParam("search"),
+			private,
 			page,
 		)
 		if err != nil {
 			return err
 		}
 
-		tags, err := h.Q.GetAllTags(c.Request().Context())
+		tags, err := h.Q.GetAllTags(c.Request().Context(), int64(private))
 		if err != nil || tags == nil {
 			tags = []database.GetAllTagsRow{}
 		}
@@ -199,12 +227,18 @@ func (h *Handler) Posts(c echo.Context) error {
 	}
 }
 
+// Displays the latest PUBLIC post
 func (h *Handler) PostLatest(c echo.Context) error {
+	auth := ct.IsAuth(c.Request().Context())
+	private := 0
+	if auth {
+		private = 1
+	}
 	post, err := h.Q.GetPostLatest(c.Request().Context())
 	if err != nil {
 		return err
 	}
-	tags, err := h.Q.GetAllTags(c.Request().Context())
+	tags, err := h.Q.GetAllTags(c.Request().Context(), int64(private))
 	if err != nil {
 		return err
 	}
