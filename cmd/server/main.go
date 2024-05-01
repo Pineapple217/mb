@@ -13,6 +13,7 @@ import (
 	"github.com/Pineapple217/mb/pkg/server"
 )
 
+// TODO: banner does not get printed first
 const banner = `
 • ▌ ▄ ·. ▄▄▄▄· 
 ·██ ▐███▪▐█ ▀█▪

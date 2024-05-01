@@ -70,9 +70,14 @@ func renderYoutubeEmbed(ctx context.Context, q *database.Queries, w io.Writer, l
 }
 
 func makeEmbedRenderHook(ctx context.Context, q *database.Queries) html.RenderNodeFunc {
-	// TODO: opt out of embed with [link text](url)
 	return func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 		if link, ok := node.(*ast.Link); ok {
+			if len(link.Children) == 0 {
+				return ast.GoToNext, false
+			}
+			if string(link.Children[0].AsLeaf().Literal) != string(link.Destination) {
+				return ast.GoToNext, false
+			}
 			if reS.MatchString(string(link.Destination)) {
 				renderSpotifyEmbed(ctx, q, w, link, entering)
 				return ast.GoToNext, true
