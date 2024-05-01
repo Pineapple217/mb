@@ -82,14 +82,27 @@ func SaveFile(ctx context.Context, q *database.Queries, f *multipart.FileHeader,
 	if err != nil {
 		return err
 	}
+	fileType := getFileType(f.Filename)
+	var t []byte
+	switch fileType {
+	case "image":
+		t = thumbnail(imgF)
+	case "audio":
+		t = []byte{}
+	case "video":
+		t = []byte{}
+	default:
+		t = []byte{}
+	}
+
 	_, err = q.CreateMediafile(
 		ctx,
 		database.CreateMediafileParams{
 			FileName:      name,
 			FilePath:      fPath,
-			FileType:      getFileType(f.Filename),
+			FileType:      fileType,
 			FileExtention: ext,
-			Thumbnail:     thumbnail(imgF),
+			Thumbnail:     t,
 		},
 	)
 	if err != nil {
@@ -134,13 +147,12 @@ func splitFileNameAndExtension(filename string) (name, ext string) {
 
 func getFileType(file string) string {
 	ext := strings.ToLower(filepath.Ext(file))
-	// TODO add gif and bmp support
 	switch ext {
 	case ".jpg", ".jpeg", ".png", ".gif", ".bmp":
 		return "image"
 	case ".mp4", ".avi", ".mkv", ".mov", ".wmv":
 		return "video"
-	case ".mp3", ".wav", ".ogg", ".flac", ".aac":
+	case ".mp3", ".wav", ".flac":
 		return "audio"
 	default:
 		return "unknown"

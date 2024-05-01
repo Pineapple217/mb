@@ -55,7 +55,7 @@ templ uploadMedia() {
 				<label>
 					[ choose file ] <input
 	type="file"
-	accept=".jpg,.jpeg,.png,.gif,.bmp"
+	accept=".jpg,.jpeg,.png,.gif,.bmp,.mp3,.wav,.flac,.mp4,.mov"
 	name="upload"
 />
 				</label>
@@ -134,9 +134,24 @@ templ mediaBase(media database.Mediafile, deleteButton bool, editMode bool) {
 				}
 			</p>
 		</hgroup>
-		<a target="_blank" href={ "/m/" + templ.URL(media.FilePath) }>
+		if media.FileType == "image" {
 			<img class="max" src={ "/m/" + media.FilePath } alt={ media.FileName }/>
-		</a>
+		} else if media.FileType == "audio" {
+			<a target="_blank" href={ "/m/" + templ.URL(media.FilePath) }>
+				source
+			</a>
+			<audio controls controlslist="noplaybackrate nodownload">
+				<source src={ "/m/" + media.FilePath }/>
+			</audio>
+		} else if media.FileType == "video" {
+			<a target="_blank" href={ "/m/" + templ.URL(media.FilePath) }>
+				source
+			</a>
+			<br/>
+			<video controls controlslist="noplaybackrate nodownload" disablepictureinpicture>
+				<source src={ "/m/" + media.FilePath }/>
+			</video>
+		}
 	</div>
 }
 
