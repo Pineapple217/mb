@@ -216,7 +216,7 @@ func Base(desc string, tags []database.GetAllTagsRow) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			if tags != nil {
+			if len(tags) > 0 {
 				templ_7745c5c3_Err = search(tags).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

@@ -62,7 +62,7 @@ templ Base(desc string, tags []database.GetAllTagsRow) {
 		<body>
 			@header()
 			<hr color="gray"/>
-			if tags != nil {
+			if len(tags) > 0 {
 				@search(tags)
 				<hr color="gray"/>
 				if ct.IsAuth(ctx) {
