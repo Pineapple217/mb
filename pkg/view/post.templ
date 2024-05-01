@@ -48,7 +48,7 @@ func getTagsOrEmpty(s sql.NullString) string {
 }
 
 templ Post(post database.Post, tags []database.GetAllTagsRow, q *database.Queries) {
-	@Base(getTagsOrEmpty(post.Tags), tags) {
+	@Base(getTagsOrEmpty(post.Tags), NullTags{Valid: true, Tags: tags}) {
 		<nav>
 			<div><a href={ templ.URL("/?p=" + strconv.FormatInt(post.CreatedAt, 10) + "##") }>← View post in timeline</a></div>
 		</nav>
@@ -57,7 +57,7 @@ templ Post(post database.Post, tags []database.GetAllTagsRow, q *database.Querie
 }
 
 templ DeletePost(post database.Post, q *database.Queries) {
-	@Base("", []database.GetAllTagsRow{}) {
+	@Base("", NullTags{Valid: false}) {
 		<form action={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/delete") } method="POST">
 			<p class="s">Are you sure you want to delete this post? </p>
 			<input type="hidden" value={ strconv.FormatInt(post.CreatedAt, 10) } name="xid"/>
@@ -69,7 +69,7 @@ templ DeletePost(post database.Post, q *database.Queries) {
 }
 
 templ Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Component, selected int64, q *database.Queries) {
-	@Base(ct.GetPostCountStr(ctx)+" posts with "+strconv.Itoa(len(tags))+" unique tags", tags) {
+	@Base(ct.GetPostCountStr(ctx)+" posts with "+strconv.Itoa(len(tags))+" unique tags", NullTags{Valid: true, Tags: tags}) {
 		@nav
 		for _, post := range(posts) {
 			if post.CreatedAt == selected {

@@ -18,6 +18,11 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 )
 
+type NullTags struct {
+	Valid bool
+	Tags  []database.GetAllTagsRow
+}
+
 var (
 	reS             *regexp.Regexp = regexp.MustCompile(`https?://open\.spotify\.com/track/(\S+)`)
 	reY             *regexp.Regexp = regexp.MustCompile(`https?://(?:www\.)?youtu(?:be\.com/watch\?v=)|(?:\.be/)(\S+)`)

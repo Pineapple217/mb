@@ -185,7 +185,7 @@ func header() templ.Component {
 	})
 }
 
-func Base(desc string, tags []database.GetAllTagsRow) templ.Component {
+func Base(desc string, tags NullTags) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -216,8 +216,8 @@ func Base(desc string, tags []database.GetAllTagsRow) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			if len(tags) > 0 {
-				templ_7745c5c3_Err = search(tags).Render(ctx, templ_7745c5c3_Buffer)
+			if tags.Valid {
+				templ_7745c5c3_Err = search(tags.Tags).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -487,7 +487,7 @@ func EditPost(post database.Post) templ.Component {
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = Base("", []database.GetAllTagsRow{}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Base("", NullTags{Valid: false}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var22), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
