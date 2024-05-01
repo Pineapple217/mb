@@ -16,6 +16,7 @@ Mb is as a micro blog server that aims to be small, fast and self contained. It 
 - Mobile friendly
 - Light weight and performant
 - Tag and text search
+- Private/draft posts
 - ...
 
 # Dev Setup
