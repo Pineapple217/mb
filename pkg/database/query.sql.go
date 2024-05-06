@@ -440,6 +440,42 @@ func (q *Queries) ListPublicPosts(ctx context.Context) ([]Post, error) {
 	return items, nil
 }
 
+const removeUnusedSpotifyCache = `-- name: RemoveUnusedSpotifyCache :execrows
+DELETE FROM spotify_cache
+WHERE id IN (
+    SELECT spotify_cache.id
+    FROM spotify_cache
+    LEFT JOIN posts ON instr(posts.content, spotify_cache.track_id) > 0
+    WHERE instr(posts.content, spotify_cache.track_id) IS NULL
+)
+`
+
+func (q *Queries) RemoveUnusedSpotifyCache(ctx context.Context) (int64, error) {
+	result, err := q.db.ExecContext(ctx, removeUnusedSpotifyCache)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
+const removeUnusedYoutubeCache = `-- name: RemoveUnusedYoutubeCache :execrows
+DELETE FROM youtube_cache
+WHERE id IN (
+    SELECT youtube_cache.id
+    FROM youtube_cache
+    LEFT JOIN posts ON instr(posts.content, youtube_cache.yt_id) > 0
+    WHERE instr(posts.content, youtube_cache.yt_id) IS NULL
+)
+`
+
+func (q *Queries) RemoveUnusedYoutubeCache(ctx context.Context) (int64, error) {
+	result, err := q.db.ExecContext(ctx, removeUnusedYoutubeCache)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
 const updateMedia = `-- name: UpdateMedia :exec
 UPDATE mediafiles
 set file_name = ?

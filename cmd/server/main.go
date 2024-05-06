@@ -5,11 +5,13 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/Pineapple217/mb/pkg/config"
 	"github.com/Pineapple217/mb/pkg/database"
 	"github.com/Pineapple217/mb/pkg/handler"
 	"github.com/Pineapple217/mb/pkg/media"
+	"github.com/Pineapple217/mb/pkg/scheduler"
 	"github.com/Pineapple217/mb/pkg/server"
 )
 
@@ -19,7 +21,7 @@ const banner = `
 ·██ ▐███▪▐█ ▀█▪
 ▐█ ▌▐▌▐█·▐█▀▀█▄
 ██ ██▌▐█▌██▄▪▐█
-▀▀  █▪▀▀▀·▀▀▀▀	v0.7.0
+▀▀  █▪▀▀▀·▀▀▀▀	v0.7.1
 Minimal blog with no JavaScript
 https://github.com/Pineapple217/mb/pkg
 -----------------------------------------------------------------------------`
@@ -42,11 +44,17 @@ func main() {
 
 	server.Start()
 
+	s := scheduler.NewScheduler()
+	s.Schedule(time.Hour*24, func() {
+		scheduler.CleanCache(q)
+	})
+
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	slog.Info("Received an interrupt signal, exiting...")
 
+	s.Stop()
 	server.Stop()
 }
 

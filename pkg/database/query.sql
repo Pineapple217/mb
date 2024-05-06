@@ -60,6 +60,23 @@ RETURNING *;
 SELECT * FROM youtube_cache
 WHERE yt_id = ? LIMIT 1;
 
+-- name: RemoveUnusedYoutubeCache :execrows
+DELETE FROM youtube_cache
+WHERE id IN (
+    SELECT youtube_cache.id
+    FROM youtube_cache
+    LEFT JOIN posts ON instr(posts.content, youtube_cache.yt_id) > 0
+    WHERE instr(posts.content, youtube_cache.yt_id) IS NULL
+);
+
+-- name: RemoveUnusedSpotifyCache :execrows
+DELETE FROM spotify_cache
+WHERE id IN (
+    SELECT spotify_cache.id
+    FROM spotify_cache
+    LEFT JOIN posts ON instr(posts.content, spotify_cache.track_id) > 0
+    WHERE instr(posts.content, spotify_cache.track_id) IS NULL
+);
 
 -- name: GetAllTags :many
 WITH split (
