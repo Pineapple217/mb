@@ -68,6 +68,7 @@ services:
   mb:
     image: pineapple217/mb:latest
     container_name: mb
+    restart: unless-stopped
     volumes:
       - ./data:/app/data
       # this makes sure the datetimes are right on the container
