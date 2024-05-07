@@ -23,7 +23,7 @@ const banner = `
 ██ ██▌▐█▌██▄▪▐█
 ▀▀  █▪▀▀▀·▀▀▀▀	v0.7.1
 Minimal blog with no JavaScript
-https://github.com/Pineapple217/mb/pkg
+https://github.com/Pineapple217/mb
 -----------------------------------------------------------------------------`
 
 func main() {
