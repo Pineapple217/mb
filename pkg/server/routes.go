@@ -1,19 +1,13 @@
 package server
 
 import (
-	"embed"
 	"log/slog"
-	"time"
 
 	"github.com/Pineapple217/mb/pkg/config"
 	"github.com/Pineapple217/mb/pkg/handler"
 	"github.com/Pineapple217/mb/pkg/middleware"
+	"github.com/Pineapple217/mb/pkg/static"
 	"github.com/labstack/echo/v4"
-)
-
-var (
-	//go:embed static/public/*
-	publicFS embed.FS
 )
 
 func (server *Server) RegisterRoutes(hdlr *handler.Handler) {
@@ -21,19 +15,19 @@ func (server *Server) RegisterRoutes(hdlr *handler.Handler) {
 	e := server.e
 
 	s := e.Group("/static")
-	// TODO: post issue, StaticFS not getting cached
-	bootTime := time.Now().Add(-2 * time.Hour)
+
 	s.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			c.Response().Header().Add("Last-Modified", bootTime.Local().UTC().Format("Mon, 2 Jan 2006 15:04:05 GMT"))
+			c.Response().Header().Add("Cache-Control", "public, max-age=31536000, immutable")
 			return next(c)
 		}
 	})
-	s.StaticFS("/", echo.MustSubFS(publicFS, "static/public"))
+	s.StaticFS("/", echo.MustSubFS(static.PublicFS, "bundle"))
 
 	e.GET("/index.xml", hdlr.RSSFeed)
 
-	e.GET("robot.txt", hdlr.RobotTxt)
+	e.GET("/robot.txt", hdlr.RobotTxt)
+	e.GET("/site.webmanifest", hdlr.Manifest)
 
 	//TODO better caching with http headers
 

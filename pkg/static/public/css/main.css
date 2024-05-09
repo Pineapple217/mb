@@ -15,7 +15,7 @@
 }
 @font-face {
   font-family: "Terminus (TTF)";
-  src: url("/static/fonts/TerminusTTF.woff2") format("woff2");
+  src: url("/static/TerminusTTF.woff2") format("woff2");
 }
 
 html,

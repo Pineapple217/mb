@@ -1,4 +1,5 @@
 docker-build:
+	@make --no-print-directory codegen
 	docker build -t pineapple217/mb:latest --build-arg GIT_COMMIT=$(shell git log -1 --format=%h) . 
 
 docker-push:
@@ -11,6 +12,7 @@ docker-update:
 codegen:
 	templ generate
 	sqlc generate
+	go run ./cmd/gen/
 
 build:
 	@make --no-print-directory codegen
@@ -18,3 +20,7 @@ build:
 
 start:
 	@./tmp/main.exe
+
+run: 
+	@make --no-print-directory build
+	@make --no-print-directory start
