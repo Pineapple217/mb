@@ -1,8 +1,11 @@
+DOCKER_TAG ?= latest
+
 docker-build:
-	docker build -t pineapple217/mb:latest --build-arg GIT_COMMIT=$(shell git log -1 --format=%h) . 
+	@make --no-print-directory codegen
+	docker build -t pineapple217/mb:$(DOCKER_TAG) --build-arg GIT_COMMIT=$(shell git log -1 --format=%h) . 
 
 docker-push:
-	docker push pineapple217/mb:latest
+	docker push pineapple217/mb:$(DOCKER_TAG)
 
 docker-update:
 	@make --no-print-directory docker-build
