@@ -13,6 +13,7 @@ import (
 	"github.com/Pineapple217/mb/pkg/media"
 	"github.com/Pineapple217/mb/pkg/scheduler"
 	"github.com/Pineapple217/mb/pkg/server"
+	"github.com/Pineapple217/mb/pkg/static"
 )
 
 // TODO: banner does not get printed first
@@ -21,7 +22,7 @@ const banner = `
 ·██ ▐███▪▐█ ▀█▪
 ▐█ ▌▐▌▐█·▐█▀▀█▄
 ██ ██▌▐█▌██▄▪▐█
-▀▀  █▪▀▀▀·▀▀▀▀	v0.7.1
+▀▀  █▪▀▀▀·▀▀▀▀	v0.7.2
 Minimal blog with no JavaScript
 https://github.com/Pineapple217/mb
 -----------------------------------------------------------------------------`
@@ -35,12 +36,14 @@ func main() {
 
 	config.Load()
 
+	rr := static.HashPublicFS()
+
 	q := database.NewQueries("file:" + config.DataDir + "/database.db")
 	h := handler.NewHandler(q)
 
 	server := server.NewServer()
 	server.RegisterRoutes(h)
-	server.ApplyMiddleware(q)
+	server.ApplyMiddleware(q, rr)
 
 	server.Start()
 

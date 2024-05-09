@@ -11,8 +11,9 @@ import (
 	echoMw "github.com/labstack/echo/v4/middleware"
 )
 
-func (s *Server) ApplyMiddleware(q *database.Queries) {
+func (s *Server) ApplyMiddleware(q *database.Queries, reRoutes map[string]string) {
 	slog.Info("Applying middlewares")
+	s.e.Pre(echoMw.Rewrite(reRoutes))
 	s.e.Use(echoMw.RequestLoggerWithConfig(echoMw.RequestLoggerConfig{
 		LogStatus:  true,
 		LogURI:     true,
