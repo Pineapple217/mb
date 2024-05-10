@@ -82,7 +82,7 @@ func HashPublicFS() map[string]string {
 	}
 
 	for k, v := range files {
-		slog.Info("file hashed", "old", k, "new", v)
+		slog.Debug("file hashed", "old", k, "new", v)
 	}
 	StaticMap = files
 	swappedMap := make(map[string]string)
