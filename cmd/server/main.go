@@ -16,7 +16,6 @@ import (
 	"github.com/Pineapple217/mb/pkg/static"
 )
 
-// TODO: banner does not get printed first
 const banner = `
 • ▌ ▄ ·. ▄▄▄▄· 
 ·██ ▐███▪▐█ ▀█▪
@@ -30,6 +29,7 @@ https://github.com/Pineapple217/mb
 func main() {
 	slog.SetDefault(slog.New(slog.Default().Handler()))
 	fmt.Println(banner)
+	os.Stdout.Sync()
 
 	CreateDataDir()
 	media.CreateUploadDir()
