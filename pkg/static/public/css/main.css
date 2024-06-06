@@ -456,6 +456,12 @@ img.max {
   column-gap: 0.2em;
 }
 
+.mp {
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+}
+
 @media only screen and (max-width: 650px) {
   details,
   form:not(details form),

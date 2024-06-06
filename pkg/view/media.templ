@@ -36,15 +36,34 @@ templ Media(mediaFiles []database.Mediafile) {
 							title="delete"
 						>[x]</a>
 					</div>
-					<a href={ templ.URL("/media/" + strconv.FormatInt(m.ID, 10)) }>
-						<img src={ "media/t/" + m.FilePath } alt={ m.FileName }/>
-					</a>
+					if m.FileType == "image" {
+						<a href={ templ.URL("/media/" + strconv.FormatInt(m.ID, 10)) }>
+							<img src={ "media/t/" + m.FilePath } alt={ m.FileName }/>
+						</a>
+					} else if m.FileType == "audio" {
+						<a href={ templ.URL("/media/" + strconv.FormatInt(m.ID, 10)) } class="mp">
+							<pre>
+								{ audioAscii }
+							</pre>
+						</a>
+					} else if m.FileType == "video" {
+						<a href={ templ.URL("/media/" + strconv.FormatInt(m.ID, 10)) } class="mp">
+							<pre>
+								{ videoAscii }
+							</pre>
+						</a>
+					}
 					<p>{ m.FileName }</p>
 				</div>
 			}
 		</div>
 	}
 }
+
+const (
+	videoAscii = "┌┬──────┬┐\n││  |>  ││\n└┴──────┴┘"
+	audioAscii = "▶ ၊၊||၊၊၊||၊၊၊||၊"
+)
 
 templ uploadMedia() {
 	<details>
@@ -118,8 +137,9 @@ templ mediaBase(media database.Mediafile, deleteButton bool, editMode bool) {
 				@timeDisplay(media.UploadedAt.In(config.OutputTimezone))
 				{ " " } | { media.FileType }
 				| { strings.ToUpper(media.FileExtention) }
-				if ct.IsAuth(ctx) {
-					<span class="r">
+				<span class="r">
+					<a target="_blank" href={ "/m/" + templ.URL(media.FilePath) }>[source]</a>
+					if ct.IsAuth(ctx) {
 						<a
 							href={ templ.URL("/media/" + strconv.FormatInt(media.ID, 10) + "/edit") }
 							title="edit"
@@ -130,24 +150,17 @@ templ mediaBase(media database.Mediafile, deleteButton bool, editMode bool) {
 								title="delete"
 							>[x]</a>
 						}
-					</span>
-				}
+					}
+				</span>
 			</p>
 		</hgroup>
 		if media.FileType == "image" {
 			<img class="max" src={ "/m/" + media.FilePath } alt={ media.FileName }/>
 		} else if media.FileType == "audio" {
-			<a target="_blank" href={ "/m/" + templ.URL(media.FilePath) }>
-				source
-			</a>
 			<audio controls controlslist="noplaybackrate nodownload">
 				<source src={ "/m/" + media.FilePath }/>
 			</audio>
 		} else if media.FileType == "video" {
-			<a target="_blank" href={ "/m/" + templ.URL(media.FilePath) }>
-				source
-			</a>
-			<br/>
 			<video controls controlslist="noplaybackrate nodownload" disablepictureinpicture>
 				<source src={ "/m/" + media.FilePath }/>
 			</video>
