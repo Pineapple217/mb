@@ -148,7 +148,7 @@ func splitFileNameAndExtension(filename string) (name, ext string) {
 func getFileType(file string) string {
 	ext := strings.ToLower(filepath.Ext(file))
 	switch ext {
-	case ".jpg", ".jpeg", ".png", ".gif", ".bmp":
+	case ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp":
 		return "image"
 	case ".mp4", ".avi", ".mkv", ".mov", ".wmv":
 		return "video"

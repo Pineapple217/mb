@@ -11,6 +11,7 @@ import (
 	"io"
 
 	_ "golang.org/x/image/bmp"
+	_ "golang.org/x/image/webp"
 )
 
 const thumbnailSize = 150
