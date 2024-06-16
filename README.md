@@ -5,13 +5,14 @@ Mb is as a micro blog server that aims to be small, fast and self contained. It 
 ## Features
 
 - Easy deploy with Docker or single binary
+- Docker image of just 8 MB!
 - Simple authentication
 - Full markdown support
 - Fully self contained with no external dependencies
 - 100% Javascript free
 - RSS feed
 - Custom Youtube and Spotify embeds
-- Build in media manager for images (video and audio comming soon)
+- Build in media manager for images, video and audio
 - Build in backups
 - Mobile friendly
 - Light weight and performant
