@@ -40,15 +40,15 @@ templ postBase(post database.Post, q *database.Queries, selected bool) {
 	</article>
 }
 
-func getTagsOrEmpty(s sql.NullString) string {
+func FormatTags(s sql.NullString) string {
 	if s.Valid {
-		return s.String
+		return " | " + strings.Replace(s.String, " ", " | ", -1)
 	}
 	return ""
 }
 
 templ Post(post database.Post, tags []database.GetAllTagsRow, q *database.Queries) {
-	@Base(getTagsOrEmpty(post.Tags), NullTags{Valid: true, Tags: tags}) {
+	@Base("Post #"+strconv.FormatInt(post.CreatedAt, 10)+FormatTags(post.Tags), NullTags{Valid: true, Tags: tags}) {
 		<nav>
 			<div><a href={ templ.URL("/?p=" + strconv.FormatInt(post.CreatedAt, 10) + "##") }>← View post in timeline</a></div>
 		</nav>
@@ -69,7 +69,7 @@ templ DeletePost(post database.Post, q *database.Queries) {
 }
 
 templ Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Component, selected int64, q *database.Queries) {
-	@Base(ct.GetPostCountStr(ctx)+" posts with "+strconv.Itoa(len(tags))+" unique tags", NullTags{Valid: true, Tags: tags}) {
+	@Base("Blog with "+ct.GetPostCountStr(ctx)+" posts with "+strconv.Itoa(len(tags))+" unique tags", NullTags{Valid: true, Tags: tags}) {
 		@nav
 		for _, post := range(posts) {
 			if post.CreatedAt == selected {

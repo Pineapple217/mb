@@ -152,9 +152,9 @@ func postBase(post database.Post, q *database.Queries, selected bool) templ.Comp
 	})
 }
 
-func getTagsOrEmpty(s sql.NullString) string {
+func FormatTags(s sql.NullString) string {
 	if s.Valid {
-		return s.String
+		return " | " + strings.Replace(s.String, " ", " | ", -1)
 	}
 	return ""
 }
@@ -208,7 +208,7 @@ func Post(post database.Post, tags []database.GetAllTagsRow, q *database.Queries
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = Base(getTagsOrEmpty(post.Tags), NullTags{Valid: true, Tags: tags}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Base("Post #"+strconv.FormatInt(post.CreatedAt, 10)+FormatTags(post.Tags), NullTags{Valid: true, Tags: tags}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -347,7 +347,7 @@ func Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Compo
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = Base(ct.GetPostCountStr(ctx)+" posts with "+strconv.Itoa(len(tags))+" unique tags", NullTags{Valid: true, Tags: tags}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Base("Blog with "+ct.GetPostCountStr(ctx)+" posts with "+strconv.Itoa(len(tags))+" unique tags", NullTags{Valid: true, Tags: tags}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

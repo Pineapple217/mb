@@ -36,7 +36,7 @@ func boiler(desc string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"theme-color\" content=\"#F7208B\"><meta name=\"darkreader-lock\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"theme-color\" content=\"#181818\"><meta name=\"darkreader-lock\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -111,7 +111,7 @@ func boiler(desc string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><title>mb</title></head><a href=\"/auth\" accesskey=\"a\" aria-hidden=\"true\" tabindex=\"-1\"></a> <a href=\"/media\" accesskey=\"m\" aria-hidden=\"true\" tabindex=\"-1\"></a> <a href=\"/backup\" accesskey=\"b\" aria-hidden=\"true\" tabindex=\"-1\"></a>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><title>MB</title></head><a href=\"/auth\" accesskey=\"a\" aria-hidden=\"true\" tabindex=\"-1\"></a> <a href=\"/media\" accesskey=\"m\" aria-hidden=\"true\" tabindex=\"-1\"></a> <a href=\"/backup\" accesskey=\"b\" aria-hidden=\"true\" tabindex=\"-1\"></a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
