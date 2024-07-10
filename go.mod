@@ -3,12 +3,12 @@ module github.com/Pineapple217/mb
 go 1.22
 
 require (
-	github.com/a-h/templ v0.2.663
-	github.com/gomarkdown/markdown v0.0.0-20240419095408-642f0ee99ae2
+	github.com/a-h/templ v0.2.747
+	github.com/gomarkdown/markdown v0.0.0-20240626202925-2eda941fd024
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/mattn/go-sqlite3 v1.14.22
-	golang.org/x/image v0.15.0
+	golang.org/x/image v0.18.0
 )
 
 require (
@@ -18,9 +18,9 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	golang.org/x/crypto v0.22.0 // indirect
-	golang.org/x/net v0.24.0 // indirect
-	golang.org/x/sys v0.19.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/crypto v0.25.0 // indirect
+	golang.org/x/net v0.27.0 // indirect
+	golang.org/x/sys v0.22.0 // indirect
+	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 )

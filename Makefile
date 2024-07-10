@@ -17,7 +17,11 @@ codegen:
 
 build:
 	@make --no-print-directory codegen
-	go build -o ./tmp/main.exe ./cmd/server
+	go build -o ./tmp/main.exe -tags sqlite_math_functions ./cmd/server
 
 start:
 	@./tmp/main.exe
+	
+make run:
+	@make --no-print-directory build
+	@make --no-print-directory start
