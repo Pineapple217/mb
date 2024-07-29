@@ -25,7 +25,7 @@ type NullTags struct {
 
 var (
 	reS             *regexp.Regexp = regexp.MustCompile(`https?://open\.spotify\.com/track/(\S+)`)
-	reY             *regexp.Regexp = regexp.MustCompile(`https?://(?:www\.)?youtu(?:be\.com/watch\?v=)|(?:\.be/)(\S+)`)
+	reY             *regexp.Regexp = regexp.MustCompile(`https?://(?:www\.)?youtu(?:be\.com/watch\?v=|\.be/)([\w\-]+)`)
 	reYTID          *regexp.Regexp = regexp.MustCompile(`(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)`)
 	reSID           *regexp.Regexp = regexp.MustCompile(`/track/(\w+)`)
 	renderer        *html.Renderer = initRender()
