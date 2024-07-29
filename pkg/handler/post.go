@@ -29,6 +29,9 @@ func (h *Handler) Post(c echo.Context) error {
 	if err != nil {
 		return echo.NotFoundHandler(c)
 	}
+	if post.Private > 0 && private == 0 {
+		return echo.NotFoundHandler(c)
+	}
 	tags, err := h.Q.GetAllTags(c.Request().Context(), int64(private))
 	if err != nil {
 		panic(err)
