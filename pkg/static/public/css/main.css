@@ -122,6 +122,11 @@ a,
   display: inline;
 }
 
+.tg {
+  color: var(--header-text-color);
+  text-decoration: underline;
+}
+
 label strong,
 .cl {
   color: var(--light-pink);

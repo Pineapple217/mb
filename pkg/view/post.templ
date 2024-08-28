@@ -1,11 +1,11 @@
 package view
 
 import (
-	"github.com/Pineapple217/mb/pkg/database"
+	"database/sql"
 	ct "github.com/Pineapple217/mb/pkg/context"
+	"github.com/Pineapple217/mb/pkg/database"
 	"strconv"
 	"strings"
-	"database/sql"
 )
 
 templ postBase(post database.Post, q *database.Queries, selected bool) {
@@ -30,7 +30,14 @@ templ postBase(post database.Post, q *database.Queries, selected bool) {
 			</div>
 			<br/>
 			if post.Tags.Valid {
-				{ "[ " + strings.Replace(post.Tags.String, " ", " | ", -1) + " ]" }
+				{ "[ " }
+				for i, tag := range strings.Split(post.Tags.String, " ") {
+					<a class="tg" href={ templ.URL("/?tag_" + tag + "=on") }>{ tag }</a>
+					if i + 1 < len(strings.Split(post.Tags.String, " ")) {
+						{ " | " }
+					}
+				}
+				{ " ]" }
 			}
 			{ "" }
 		</header>
