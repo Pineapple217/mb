@@ -3,6 +3,7 @@ package config
 import (
 	"log/slog"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/Pineapple217/mb/pkg/auth"
@@ -15,6 +16,7 @@ const (
 	defaultRights  = "mb.dev"
 	defaultMessage = "Created without any JS."
 	defaultHost    = "http://localhost:3000"
+	defaultDebug   = false
 
 	DataDir   = "./data"
 	UploadDir = DataDir + "/uploads"
@@ -28,6 +30,7 @@ var (
 	HomepageRights  string
 	HomepageMessage string
 	Host            string
+	Debug           bool
 )
 
 func Load() {
@@ -51,6 +54,7 @@ func Load() {
 	initRights()
 	initMessage()
 	initHost()
+	initDebug()
 }
 
 func initTimezone() {
@@ -112,4 +116,19 @@ func initHost() {
 		return
 	}
 	Host = host
+}
+
+func initDebug() {
+	debugStr, isSet := os.LookupEnv("MB_DEBUG")
+	var debug bool
+	if !isSet {
+		Debug = defaultDebug
+		return
+	}
+	debug, err := strconv.ParseBool(debugStr)
+	if err != nil {
+		Debug = defaultDebug
+		return
+	}
+	Debug = debug
 }

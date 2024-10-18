@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Pineapple217/mb/pkg/config"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/labstack/echo/v4"
 )
@@ -21,11 +22,11 @@ type Server struct {
 }
 
 func NewServer() *Server {
-	slog.Info("Creating server")
+	slog.Info("Creating server", "debug", config.Debug)
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
-	e.Debug = true
+	e.Debug = config.Debug
 	NewServer := &Server{
 		e: e,
 	}
