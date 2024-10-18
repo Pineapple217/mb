@@ -79,11 +79,7 @@ templ Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Comp
 	@Base("Blog with "+ct.GetPostCountStr(ctx)+" posts with "+strconv.Itoa(len(tags))+" unique tags", NullTags{Valid: true, Tags: tags}) {
 		@nav
 		for _, post := range(posts) {
-			if post.CreatedAt == selected {
-				@postBase(post, q, true)
-			} else {
-				@postBase(post, q, false)
-			}
+			@postBase(post, q, post.CreatedAt == selected)
 		}
 		@nav
 		<hr color="gray"/>
