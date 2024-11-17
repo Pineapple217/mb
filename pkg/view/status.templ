@@ -1,11 +1,15 @@
 package view
 
-templ NotFound() {
+templ NotFound(message string) {
 	@boiler("Not Found") {
 		<div id="notfound">
 			<div>
 				<h1>404</h1>
-				<p>Not Found</p>
+				if message != "" {
+					<p>{ message }</p>
+				} else {
+					<p>Not Found</p>
+				}
 				<a href={ templ.URL("/") }>{ "<- return home" }</a>
 			</div>
 		</div>

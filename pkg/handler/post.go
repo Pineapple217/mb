@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -237,10 +238,15 @@ func (h *Handler) PostLatest(c echo.Context) error {
 	if auth {
 		private = 1
 	}
+
 	post, err := h.Q.GetPostLatest(c.Request().Context())
+	if errors.Is(err, sql.ErrNoRows) {
+		return NotFoundMsg(c, "No posts available yet")
+	}
 	if err != nil {
 		return err
 	}
+
 	tags, err := h.Q.GetAllTags(c.Request().Context(), int64(private))
 	if err != nil {
 		return err
