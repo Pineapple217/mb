@@ -25,6 +25,7 @@ Mb is as a micro blog server that aims to be small, fast and self contained. It 
 ## Dev dependencies
 
 Latest version of Go and the following codegen tools.
+Use the latest version or the version currently used in the repo.
 
 ```sh
 go install github.com/a-h/templ/cmd/templ@latest
