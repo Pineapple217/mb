@@ -9,5 +9,9 @@ import (
 
 func NotFound(c echo.Context) error {
 	c.Response().Writer.WriteHeader(http.StatusNotFound)
-	return render(c, view.NotFound())
+	return render(c, view.NotFound(""))
+}
+func NotFoundMsg(c echo.Context, msg string) error {
+	c.Response().Writer.WriteHeader(http.StatusNotFound)
+	return render(c, view.NotFound(msg))
 }
