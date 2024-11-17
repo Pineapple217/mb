@@ -237,7 +237,22 @@ func (h *Handler) PostLatest(c echo.Context) error {
 	if auth {
 		private = 1
 	}
+	_, postCount, err := h.Q.QueryPost(
+		c.Request().Context(),
+		nil,
+		"",
+		0,
+		int(0),
+	)
+
+	if err != nil {
+		return err
+	}
+	if postCount == 0 {
+		return render(c, view.NoPosts())
+	}
 	post, err := h.Q.GetPostLatest(c.Request().Context())
+
 	if err != nil {
 		return err
 	}

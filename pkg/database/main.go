@@ -55,7 +55,7 @@ const queryPosts = `SELECT id, created_at, tags, content, private FROM posts`
 const countPosts = `SELECT COUNT(*) FROM posts`
 const queryPostsOrder = ` ORDER BY created_at DESC`
 
-func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, pritvate int, page int) ([]Post, int, error) {
+func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, private int, page int) ([]Post, int, error) {
 	var filter strings.Builder
 	firstWhere := false
 	if search != "" {
@@ -83,7 +83,7 @@ func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, p
 		}
 	}
 
-	if pritvate == 0 {
+	if private == 0 {
 		if firstWhere {
 			filter.WriteString(" and (")
 		} else {

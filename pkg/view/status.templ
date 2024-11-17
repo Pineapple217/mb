@@ -11,3 +11,15 @@ templ NotFound() {
 		</div>
 	}
 }
+
+templ NoPosts(){
+	@boiler("No Posts"){
+				<div id="notfound">
+			<div>
+				<h1>No Posts</h1>
+				<p>No posts available yet</p>
+				<a href={ templ.URL("/") }>{ "<- return home" }</a>
+			</div>
+		</div>
+	}
+}
