@@ -73,7 +73,7 @@ func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, p
 		}
 
 		for i, tag := range tags {
-			filter.WriteString(fmt.Sprintf("tags like '%%%s%%' escape '\\'", tag))
+			filter.WriteString(fmt.Sprintf("' ' || tags || ' ' like '%% %s %%' escape '\\'", tag))
 
 			if i+1 < len(tags) {
 				filter.WriteString(" and ")
