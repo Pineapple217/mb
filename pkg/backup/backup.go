@@ -53,12 +53,12 @@ func extractDateFromFilename(filename string) time.Time {
 	return t
 }
 
-// TODO: cleanup
 func Backup(ctx context.Context, q *database.Queries) error {
 	file, err := q.Backup(ctx)
 	if err != nil {
 		return err
 	}
+	defer os.Remove(file)
 
 	timeString := time.Now().Format("2006-01-02_15-04-05")
 	tarballName := fmt.Sprintf("%s/backup_%s.tar.gz", config.BackupDir, timeString)
@@ -72,37 +72,13 @@ func Backup(ctx context.Context, q *database.Queries) error {
 	gzipWriter := tar.NewWriter(tarballFile)
 	defer gzipWriter.Close()
 
-	dbBackup, err := os.Open(file)
-	if err != nil {
-		return err
-	}
-	defer dbBackup.Close()
-
-	dbBackupStats, err := dbBackup.Stat()
-	if err != nil {
-		return err
-	}
-
-	header, err := tar.FileInfoHeader(dbBackupStats, "")
-	if err != nil {
-		return err
-	}
-	header.Name = dbBackupStats.Name()
-
-	if err := gzipWriter.WriteHeader(header); err != nil {
-		return err
-	}
-	if _, err := io.Copy(gzipWriter, dbBackup); err != nil {
-		return err
-	}
-
-	dbBackup.Close()
-	if err = os.Remove(file); err != nil {
+	if err := addFileToTar(gzipWriter, file, ""); err != nil {
 		return err
 	}
 
 	folderPath := config.UploadDir
 	baseUploadDir := filepath.Base(filepath.Clean(folderPath))
+
 	err = filepath.Walk(folderPath, func(filePath string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -112,33 +88,44 @@ func Backup(ctx context.Context, q *database.Queries) error {
 			return nil
 		}
 
-		file, err := os.Open(filePath)
-		if err != nil {
-			return err
-		}
-		defer file.Close()
-
-		header, err := tar.FileInfoHeader(info, "")
-		if err != nil {
-			return err
-		}
-
 		relPath, err := filepath.Rel(folderPath, filePath)
 		if err != nil {
 			return err
 		}
-		header.Name = baseUploadDir + "/" + strings.Replace(relPath, "\\", "/", -1)
-
-		if err := gzipWriter.WriteHeader(header); err != nil {
-			return err
-		}
-
-		if _, err := io.Copy(gzipWriter, file); err != nil {
-			return err
-		}
-
-		return nil
+		headerName := filepath.Join(baseUploadDir, filepath.ToSlash(relPath))
+		return addFileToTar(gzipWriter, filePath, headerName)
 	})
 
+	return err
+}
+
+func addFileToTar(gzipWriter *tar.Writer, filePath, headerName string) error {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	fileInfo, err := file.Stat()
+	if err != nil {
+		return err
+	}
+
+	header, err := tar.FileInfoHeader(fileInfo, "")
+	if err != nil {
+		return err
+	}
+
+	if headerName != "" {
+		header.Name = headerName
+	} else {
+		header.Name = fileInfo.Name()
+	}
+
+	if err := gzipWriter.WriteHeader(header); err != nil {
+		return err
+	}
+
+	_, err = io.Copy(gzipWriter, file)
 	return err
 }
