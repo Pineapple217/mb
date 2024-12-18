@@ -37,7 +37,6 @@ func (h *Handler) Mediafile(c echo.Context) error {
 	return render(c, view.Mediafile(mediafile))
 }
 
-// TODO: audio and video
 func (h *Handler) MediaUpload(c echo.Context) error {
 	file, err := c.FormFile("upload")
 	if err != nil {
