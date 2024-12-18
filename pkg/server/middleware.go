@@ -30,6 +30,7 @@ func (s *Server) ApplyMiddleware(q *database.Queries, reRoutes map[string]string
 
 		},
 	}))
+	s.e.Use(middleware.Path)
 
 	s.e.Use(echoMw.RateLimiterWithConfig(echoMw.RateLimiterConfig{
 		Store: echoMw.NewRateLimiterMemoryStoreWithConfig(

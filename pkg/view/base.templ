@@ -5,6 +5,7 @@ import (
 	ct "github.com/Pineapple217/mb/pkg/context"
 	"github.com/Pineapple217/mb/pkg/database"
 	s "github.com/Pineapple217/mb/pkg/static"
+	"net/url"
 	"strconv"
 	"time"
 	"unicode"
@@ -30,7 +31,7 @@ templ boiler(desc string) {
 			<link rel="stylesheet" href={ s.StaticMap["/static/css/main.css"] }/>
 			<title>MB</title>
 		</head>
-		<a href="/auth" accesskey="a" aria-hidden="true" tabindex="-1"></a>
+		<a href={ templ.URL("/auth?r=" + url.QueryEscape(ct.GetPath(ctx))) } accesskey="a" aria-hidden="true" tabindex="-1"></a>
 		<a href="/media" accesskey="m" aria-hidden="true" tabindex="-1"></a>
 		<a href="/backup" accesskey="b" aria-hidden="true" tabindex="-1"></a>
 		{ children... }

@@ -29,7 +29,15 @@ func GetPostCount(ctx context.Context) int64 {
 	return -1
 }
 
+func GetPath(ctx context.Context) string {
+	if path, ok := ctx.Value(PathContextKey).(string); ok {
+		return path
+	}
+	return ""
+}
+
 type contextKey string
 
 var AuthContextKey contextKey = "isAuth"
 var PostCountContextKey contextKey = "postCount"
+var PathContextKey contextKey = "path"
