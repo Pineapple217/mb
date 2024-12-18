@@ -20,12 +20,11 @@ func (h *Handler) AuthForm(c echo.Context) error {
 	return render(c, view.AuthForm(r))
 }
 
-// TODO: keep redirect afther giving wrong password
-
 func (h *Handler) Auth(c echo.Context) error {
 	pw := c.FormValue("auth")
+	r := c.FormValue("redirect")
 	if pw != auth.SecretPassword {
-		return c.Redirect(http.StatusSeeOther, "/auth")
+		return c.Redirect(http.StatusSeeOther, "/auth?r="+url.QueryEscape(r))
 	}
 	bytes := make([]byte, 32)
 	if _, err := rand.Read(bytes); err != nil {
@@ -41,6 +40,5 @@ func (h *Handler) Auth(c echo.Context) error {
 		Value:    hashStr,
 	}
 	c.SetCookie(&cookie)
-	r := c.FormValue("redirect")
 	return c.Redirect(http.StatusSeeOther, r)
 }
