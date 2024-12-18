@@ -1,13 +1,14 @@
 package view
 
 import (
-	"time"
-	"strconv"
-	"strings"
-	"github.com/Pineapple217/mb/pkg/database"
-	ct "github.com/Pineapple217/mb/pkg/context"
 	"github.com/Pineapple217/mb/pkg/config"
+	ct "github.com/Pineapple217/mb/pkg/context"
+	"github.com/Pineapple217/mb/pkg/database"
 	s "github.com/Pineapple217/mb/pkg/static"
+	"strconv"
+	"time"
+	"unicode"
+	"unicode/utf8"
 )
 
 templ boiler(desc string) {
@@ -118,7 +119,7 @@ templ EditPost(post database.Post) {
 			</div>
 			<br/>
 			<br/>
-			<textarea name="content" rows={ getRows(post.Content) } tabindex="2">{ post.Content }</textarea>
+			<textarea name="content" rows={ strconv.Itoa(getRows(post.Content)) } tabindex="2">{ post.Content }</textarea>
 			<input type="hidden" value={ strconv.FormatInt(post.CreatedAt, 10) } name="xid"/>
 		</form>
 	}
@@ -146,11 +147,49 @@ templ createPost() {
 	</details>
 }
 
-func getRows(content string) string {
-	// TODO: doesnt count linewraps, shoudnt be longer then the page
-	count := strings.Count(content, "\n")
-	if count < 13 {
-		count = 13
+const minRows = 15
+const maxWidthInChars = 89
+
+func getRows(content string) int {
+	count := 0
+	currentLineLen := 0
+	lastWhitespace := -1
+
+	i := 0
+	rs := []rune(content)
+	for range 100_000 { // prevent infinite loop
+		r := rs[i]
+		if unicode.IsSpace(r) {
+			lastWhitespace = i
+		}
+		if r == '\n' {
+			count++
+			currentLineLen = 0
+		} else {
+			charWidth := utf8.RuneLen(r)
+			if currentLineLen+charWidth >= maxWidthInChars {
+				count++
+				currentLineLen = 0
+				if i-lastWhitespace < maxWidthInChars-1 {
+					i = lastWhitespace + 1
+				}
+			} else {
+				currentLineLen += charWidth
+			}
+		}
+		i++
+		if i >= len(rs) {
+			break
+		}
 	}
-	return strconv.Itoa(count + 2)
+	if currentLineLen > 0 {
+		count++
+	}
+
+	count += 2 // extra padding
+
+	if count < minRows {
+		count = minRows
+	}
+	return count
 }
