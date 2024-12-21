@@ -5,7 +5,7 @@
   --background-color: #181818;
   --card-background-color: #1a1a1a;
   --red: #ff2323;
-  --pink: #e571f0;
+  --pink: #c773cf;
   --light-pink: #ff7a7a;
   --border: #594e4e;
   --spotify-green: #1ed760;
@@ -297,16 +297,39 @@ figure {
 
 pre {
   overflow-x: auto;
+  border-left: 1px dotted var(--header-text-color);
+  padding-left: 0.5em;
 }
 
 .logo {
   margin-left: 2em;
 }
 
-/* code {
-  color: var(--pink);
+code {
+  color: var(--logo-color);
   tab-size: 4;
-} */
+}
+
+.code-s1, .code-s {
+  color: var(--text-color);
+}
+
+.code-k, .code-kd, .code-kt, .code-o{
+  color: var(--pink);
+}
+
+.code-nf, .code-nt, .code-nb {
+  color: var(--light-pink);
+}
+
+
+.code-mi {
+  color: white;
+}
+
+code:not(pre code) {
+  color: var(--pink);
+}
 
 code:not(pre code):before,
 code:not(pre code):after {

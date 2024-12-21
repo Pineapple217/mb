@@ -25,7 +25,6 @@ import (
 	"github.com/alecthomas/chroma"
 	"github.com/alecthomas/chroma/formatters/html"
 	"github.com/alecthomas/chroma/lexers"
-	"github.com/alecthomas/chroma/styles"
 )
 
 var (
@@ -34,26 +33,11 @@ var (
 )
 
 func init() {
-	htmlFormatter = html.New(html.WithClasses(false), html.TabWidth(4))
+	htmlFormatter = html.New(html.WithClasses(true), html.TabWidth(4), html.ClassPrefix("code-"), html.PreventSurroundingPre(true))
 	if htmlFormatter == nil {
 		panic("couldn't create html formatter")
 	}
-	styleName := "xcode-dark"
-	highlightStyle = styles.Get(styleName)
-	if highlightStyle == nil {
-		panic(fmt.Sprintf("didn't find style '%s'", styleName))
-	}
-	builder := highlightStyle.Builder()
-	bg := builder.Get(chroma.Background)
-	bg.Background = 0
-	bg.NoInherit = true
-
-	builder.AddEntry(chroma.Background, bg)
-	style, err := builder.Build()
-	if err != nil {
-		panic(err)
-	}
-	highlightStyle = style
+	highlightStyle = &chroma.Style{}
 }
 
 type NullTags struct {
@@ -90,22 +74,15 @@ func embedRenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus,
 		return ast.GoToNext, true
 	}
 	if code, ok := node.(*ast.CodeBlock); ok {
-		renderCode(w, code, entering)
+		w.Write([]byte("<pre><code>"))
+		htmlHighlight(w, string(code.Literal), string(code.Info))
+		w.Write([]byte("</pre></code>"))
 		return ast.GoToNext, true
 	}
 	return ast.GoToNext, false
 }
 
-func renderCode(w io.Writer, codeBlock *ast.CodeBlock, entering bool) {
-	defaultLang := ""
-	lang := string(codeBlock.Info)
-	htmlHighlight(w, string(codeBlock.Literal), lang, defaultLang)
-}
-
-func htmlHighlight(w io.Writer, source, lang, defaultLang string) error {
-	if lang == "" {
-		lang = defaultLang
-	}
+func htmlHighlight(w io.Writer, source, lang string) error {
 	l := lexers.Get(lang)
 	if l == nil {
 		l = lexers.Analyse(source)
