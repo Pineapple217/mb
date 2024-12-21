@@ -1,10 +1,15 @@
 package view
 
 import (
+	"bytes"
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"regexp"
+	"strings"
 	"sync"
 	"time"
 
@@ -23,96 +28,115 @@ type NullTags struct {
 	Tags  []database.GetAllTagsRow
 }
 
+type spotifyEmbed struct {
+	ast.Leaf
+	cache database.SpotifyCache
+}
+
+type youtubeEmbed struct {
+	ast.Leaf
+	cache database.YoutubeCache
+}
+
 var (
-	reS             *regexp.Regexp = regexp.MustCompile(`https?://open\.spotify\.com/track/(\S+)`)
 	reY             *regexp.Regexp = regexp.MustCompile(`https?://(?:www\.)?youtu(?:be\.com/watch\?v=|\.be/)([\w\-]+)`)
 	reYTID          *regexp.Regexp = regexp.MustCompile(`(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)`)
-	reSID           *regexp.Regexp = regexp.MustCompile(`/track/(\w+)`)
 	renderer        *html.Renderer = initRender()
 	redendererMutex sync.Mutex
 )
 
-func renderSpotifyEmbed(ctx context.Context, q *database.Queries, w io.Writer, l *ast.Link, entering bool) {
-	if entering {
-		id := reSID.FindStringSubmatch(string(l.Destination))[1]
-		sc, err := q.GetSpotifyCache(ctx, id)
-		if err != nil {
-			sc = embed.SpotifyScrape(ctx, q, string(l.Destination))
-		}
-		SpotifyEmbed(sc).Render(ctx, w)
-		// setting the content to nil so the OG url wil show
-		l.Children[0].AsLeaf().Literal = nil
-	} else {
-		// prevents string that are in the same p form being exleded
-		// TODO: modify node tree to remove this fix
-		// https://blog.kowalczyk.info/article/cxn3/advanced-markdown-processing-in-go.html
-		io.WriteString(w, "<p/><p>")
+func embedRenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
+	// context is not needed for embed templates
+	// no context removes need for closure and simplifies code
+	if s, ok := node.(*spotifyEmbed); ok {
+		SpotifyEmbed(s.cache).Render(context.Background(), w)
+		return ast.GoToNext, true
 	}
-
+	if s, ok := node.(*youtubeEmbed); ok {
+		YoutubeEmbed(s.cache).Render(context.Background(), w)
+		return ast.GoToNext, true
+	}
+	return ast.GoToNext, false
 }
 
-func renderYoutubeEmbed(ctx context.Context, q *database.Queries, w io.Writer, l *ast.Link, entering bool) {
-	if entering {
-		id := reYTID.FindStringSubmatch(string(l.Destination))[1]
-		ytc, err := q.GetYoutubeCache(ctx, id)
-		if err != nil {
-			ytc = embed.YoutubeScrape(ctx, q, id)
-		}
-		YoutubeEmbed(ytc).Render(ctx, w)
-		// setting the content to nil so the OG url wil show
-		l.Children[0].AsLeaf().Literal = nil
-	} else {
-		// prevents string that are in the same p form being exleded
-		// TODO: modify node tree to remove this fix
-		// https://blog.kowalczyk.info/article/cxn3/advanced-markdown-processing-in-go.html
-		io.WriteString(w, "<p/><p>")
-	}
-}
+func makeParserHook(ctx context.Context, q *database.Queries) parser.BlockFunc {
+	return func(data []byte) (ast.Node, []byte, int) {
+		if bytes.HasPrefix(data, []byte(embed.SpotifyUrlPrefix)) {
+			i := bytes.IndexByte(data, '\n')
+			var d string
+			if i == -1 {
+				d = string(data)
+			} else {
+				d = string(data[:i])
+			}
 
-func makeEmbedRenderHook(ctx context.Context, q *database.Queries) html.RenderNodeFunc {
-	return func(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
-		if link, ok := node.(*ast.Link); ok {
-			if len(link.Children) == 0 {
-				return ast.GoToNext, false
+			id, _ := strings.CutPrefix(d, embed.SpotifyUrlPrefix)
+			id = strings.Split(id, "?si=")[0]
+
+			c, err := q.GetSpotifyCache(ctx, id)
+			if errors.Is(err, sql.ErrNoRows) {
+				c, err = embed.SpotifyScrape(ctx, q, id)
+				if err != nil {
+					slog.Error("Failed to scrape track", "id", id, "err", err)
+					return nil, nil, 0
+				}
+			} else if err != nil {
+				slog.Error("Failed to fetch track cache", "id", id, "err", err)
+				return nil, nil, 0
 			}
-			if string(link.Children[0].AsLeaf().Literal) != string(link.Destination) {
-				return ast.GoToNext, false
-			}
-			if reS.MatchString(string(link.Destination)) {
-				renderSpotifyEmbed(ctx, q, w, link, entering)
-				return ast.GoToNext, true
-			}
-			if reY.MatchString(string(link.Destination)) {
-				renderYoutubeEmbed(ctx, q, w, link, entering)
-				return ast.GoToNext, true
-			}
+			node := spotifyEmbed{cache: c}
+			return &node, nil, len(d)
 		}
-		// TODO: add custom video and audio nodes
-		return ast.GoToNext, false
+
+		// TODO: cleanup regex
+		if bytes.HasPrefix(data, []byte("http")) && reY.Match(data) {
+			i := bytes.IndexByte(data, '\n')
+			var d string
+			if i == -1 {
+				d = string(data)
+			} else {
+				d = string(data[:i])
+			}
+			id := reYTID.FindStringSubmatch(d)[1]
+			c, err := q.GetYoutubeCache(ctx, id)
+			if errors.Is(err, sql.ErrNoRows) {
+				c, err = embed.YoutubeScrape(ctx, q, id)
+				if err != nil {
+					slog.Error("Failed to scrape video", "id", id, "err", err)
+					return nil, nil, 0
+				}
+			} else if err != nil {
+				slog.Error("Failed to fetch video cache", "id", id, "err", err)
+				return nil, nil, 0
+			}
+			node := youtubeEmbed{cache: c}
+			return &node, nil, len(d)
+		}
+		return nil, nil, 0
 	}
 }
 
 func MdToHTML(ctx context.Context, q *database.Queries, md string) string {
-	// create markdown parser with extensions
-	// TODO: make a gobal parser 1 time
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock | parser.FencedCode
 	p := parser.NewWithExtensions(extensions)
+	p.Opts.ParserHook = makeParserHook(ctx, q)
+
 	doc := p.Parse([]byte(md))
 
 	// TODO: mutex reduces speed by 20%, add renderer pool speed up
-	redendererMutex.Lock()
-	defer redendererMutex.Unlock()
-	renderer.Opts.RenderNodeHook = makeEmbedRenderHook(ctx, q)
-
 	// TODO: syntax highlighter with github.com/alecthomas/chroma
 	// https://blog.kowalczyk.info/article/cxn3/advanced-markdown-processing-in-go.html
+
+	redendererMutex.Lock()
+	defer redendererMutex.Unlock()
 	return string(markdown.Render(doc, renderer))
 }
 
 func initRender() *html.Renderer {
 	htmlFlags := html.CommonFlags | html.HrefTargetBlank
 	opts := html.RendererOptions{
-		Flags: htmlFlags,
+		Flags:          htmlFlags,
+		RenderNodeHook: embedRenderHook,
 	}
 	return html.NewRenderer(opts)
 

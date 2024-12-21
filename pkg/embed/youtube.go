@@ -25,9 +25,15 @@ type rootMeta struct {
 	AuthorUrl string `json:"author_url"`
 }
 
-func YoutubeScrape(ctx context.Context, q *database.Queries, id string) database.YoutubeCache {
-	thumb := youtubeGetThumb(id)
-	meta := youtubeGetMetaData(id)
+func YoutubeScrape(ctx context.Context, q *database.Queries, id string) (database.YoutubeCache, error) {
+	thumb, err := youtubeGetThumb(id)
+	if err != nil {
+		return database.YoutubeCache{}, err
+	}
+	meta, err := youtubeGetMetaData(id)
+	if err != nil {
+		return database.YoutubeCache{}, err
+	}
 	// TODO: possible parallelization but realistically not needed
 
 	ytc, err := q.CreateYoutubebCache(ctx, database.CreateYoutubebCacheParams{
@@ -37,44 +43,43 @@ func YoutubeScrape(ctx context.Context, q *database.Queries, id string) database
 		Author:    meta.Author,
 		AuthorUrl: meta.AuthorUrl,
 	})
-
 	if err != nil {
-		panic(err)
+		return database.YoutubeCache{}, err
 	}
 
 	slog.Info("youtube scrape", "id", ytc.YtID)
-	return ytc
+	return ytc, nil
 }
 
-func youtubeGetThumb(id string) string {
+func youtubeGetThumb(id string) (string, error) {
 	for _, v := range imgs {
 		resp, err := http.Get(fmt.Sprintf("https://i3.ytimg.com/vi/%s/%s", id, v))
 		if err != nil {
-			panic(err)
+			return "", err
 		}
 		defer resp.Body.Close()
 		if resp.StatusCode != http.StatusNotFound {
-			return v
+			return v, nil
 		}
 	}
-	return imgs[len(imgs)-1]
+	return imgs[len(imgs)-1], nil
 }
 
-func youtubeGetMetaData(id string) rootMeta {
+func youtubeGetMetaData(id string) (rootMeta, error) {
 	s := fmt.Sprintf(youtubeMetaDataUrl, id)
 	resp, err := http.Get(s)
 	if err != nil {
-		panic(err)
+		return rootMeta{}, err
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		panic(err)
+		return rootMeta{}, err
 	}
 	var root rootMeta
 	err = json.Unmarshal(body, &root)
 	if err != nil {
-		slog.Error("Error unmarshalling JSON ytmeta", "err", err)
+		return rootMeta{}, err
 	}
-	return root
+	return root, err
 }

@@ -2,7 +2,7 @@ package embed
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"io"
 	"net/http"
 	"regexp"
@@ -59,29 +59,31 @@ type Root struct {
 
 const query = `<script\s+id="initial-state"\s+type="text/plain">([^<]+)</script>`
 
-func SpotifyScrape(ctx context.Context, q *database.Queries, url string) database.SpotifyCache {
-	resp, err := http.Get(url)
+const SpotifyUrlPrefix = "https://open.spotify.com/track/"
+
+func SpotifyScrape(ctx context.Context, q *database.Queries, id string) (database.SpotifyCache, error) {
+	resp, err := http.Get(SpotifyUrlPrefix + id)
 	if err != nil {
-		panic(err)
+		return database.SpotifyCache{}, err
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		panic(err)
+		return database.SpotifyCache{}, err
 	}
 	re := regexp.MustCompile(query)
 	s := re.FindStringSubmatch(string(body))
-	if len(s) == 1 {
-		panic("not matches found")
+	if len(s) < 2 {
+		return database.SpotifyCache{}, errors.New("track not found")
 	}
 	js, err := base64.StdEncoding.DecodeString(string(s[1]))
 	if err != nil {
-		panic(err)
+		return database.SpotifyCache{}, err
 	}
 	var root Root
 	err = json.Unmarshal(js, &root)
 	if err != nil {
-		fmt.Println("Error unmarshalling JSON:", err)
+		return database.SpotifyCache{}, err
 	}
 	keys := make([]string, 0, len(root.Entities.Items))
 	for k := range root.Entities.Items {
@@ -99,8 +101,8 @@ func SpotifyScrape(ctx context.Context, q *database.Queries, url string) databas
 		AudioPreviewUrl: track.Previews.AudioPreviews.Items[0].URL,
 	})
 	if err != nil {
-		panic(err)
+		return database.SpotifyCache{}, err
 	}
 	slog.Info("spotify scrape", "id", sc.TrackID)
-	return sc
+	return sc, nil
 }
