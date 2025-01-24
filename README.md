@@ -1,6 +1,6 @@
 # About
 
-Mb is as a micro blog server that aims to be small, fast and self contained. It was heavly inspired by [this project](https://github.com/l1mey112/me.l-m.dev) that was writen in V. I rewrote it in Go in a mutch cleaner fashion and added features. The main simularaties that are left is the philosophy and the visuals (which are improved for mobile).
+Mb is as a micro blog server that aims to be small, fast and self contained. It was heavly inspired by [this project](https://github.com/l1mey112/me.l-m.dev) that was writen in V. I rewrote it in Go in a much cleaner fashion and added features. The main similarities that are left is the philosophy and the visuals (which are improved for mobile).
 
 ## Features
 
@@ -12,8 +12,8 @@ Mb is as a micro blog server that aims to be small, fast and self contained. It 
 - 100% Javascript free
 - RSS feed
 - Custom Youtube and Spotify embeds
-- Build in media manager for images, video and audio
-- Build in backups
+- built in media manager for images, video and audio
+- built in backups
 - Mobile friendly
 - Light weight and performant
 - Tag and text search
@@ -45,7 +45,7 @@ go install github.com/cosmtrek/air@latest
 
 ## Docker
 
-This is an expample to run mb with Docker. You can you can use it as a base for your own config.
+This is an example to run mb with Docker. You can you can use it as a base for your own config.
 
 ### Env
 
