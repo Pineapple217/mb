@@ -38,7 +38,7 @@ func main() {
 
 	rr := static.HashPublicFS()
 
-	q := database.NewQueries("file:" + config.DataDir + "/database.db")
+	q := database.NewQueries("file:" + config.DataDir + "/database.db?_journal_mode=WAL")
 	h := handler.NewHandler(q)
 
 	server := server.NewServer()
