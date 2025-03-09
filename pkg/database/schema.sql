@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS posts (
   created_at INTEGER NOT NULL,
   tags       TEXT,
   content    TEXT    NOT NULL,
+  html       TEXT    NOT NULL,
   private    INTEGER NOT NULL DEFAULT 0
 );
 

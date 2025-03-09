@@ -41,7 +41,7 @@ func (h *Handler) Post(c echo.Context) error {
 		tags = []database.GetAllTagsRow{}
 	}
 
-	return render(c, view.Post(post, tags, h.Q))
+	return render(c, view.Post(post, tags))
 }
 
 func (h *Handler) CreatePost(c echo.Context) error {
@@ -58,11 +58,13 @@ func (h *Handler) CreatePost(c echo.Context) error {
 	if privateStr == "on" {
 		private = 1
 	}
+	html := view.MdToHTML(c.Request().Context(), h.Q, content)
 	// create post
 	h.Q.CreatePost(c.Request().Context(), database.CreatePostParams{
 		Tags:    tagsNS,
 		Content: content,
 		Private: int64(private),
+		Html:    html,
 	})
 
 	return c.Redirect(http.StatusSeeOther, "/")
@@ -105,10 +107,12 @@ func (h *Handler) EditPost(c echo.Context) error {
 	if privateStr == "on" {
 		private = 1
 	}
+	html := view.MdToHTML(c.Request().Context(), h.Q, content)
 	// update in db
 	err = h.Q.UpdatePost(c.Request().Context(), database.UpdatePostParams{
 		Tags:      tagsNS,
 		Content:   content,
+		Html:      html,
 		Private:   int64(private),
 		CreatedAt: xid,
 	})
@@ -133,7 +137,7 @@ func (h *Handler) DeletePostForm(c echo.Context) error {
 		return echo.NotFoundHandler(c)
 	}
 
-	return render(c, view.DeletePost(post, h.Q))
+	return render(c, view.DeletePost(post))
 }
 
 func (h *Handler) DeletePost(c echo.Context) error {
@@ -194,7 +198,7 @@ func (h *Handler) Posts(c echo.Context) error {
 		maxPage := (postCount - 1) / database.PostsPerPage
 		nav := view.Nav(int(page), maxPage, "")
 
-		return render(c, view.Posts(posts, tags, nav, p, h.Q))
+		return render(c, view.Posts(posts, tags, nav, p))
 	} else {
 		qps := c.QueryParams()
 		queryTags := make([]string, 0, len(qps))
@@ -227,7 +231,7 @@ func (h *Handler) Posts(c echo.Context) error {
 		urlQuery := constructUrlQuery(c.QueryParam("search"), queryTags)
 		nav := view.Nav(page, maxPage, urlQuery)
 
-		return render(c, view.Posts(posts, tags, nav, -1, h.Q))
+		return render(c, view.Posts(posts, tags, nav, -1))
 	}
 }
 
@@ -251,5 +255,5 @@ func (h *Handler) PostLatest(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	return render(c, view.Post(post, tags, h.Q))
+	return render(c, view.Post(post, tags))
 }

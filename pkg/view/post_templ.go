@@ -16,7 +16,7 @@ import (
 	"strings"
 )
 
-func postBase(post database.Post, q *database.Queries, selected bool) templ.Component {
+func postBase(post database.Post, selected bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -199,7 +199,7 @@ func postBase(post database.Post, q *database.Queries, selected bool) templ.Comp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.Raw(MdToHTML(ctx, q, post.Content)).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templ.Raw(post.Html).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -218,7 +218,7 @@ func FormatTags(s sql.NullString) string {
 	return ""
 }
 
-func Post(post database.Post, tags []database.GetAllTagsRow, q *database.Queries) templ.Component {
+func Post(post database.Post, tags []database.GetAllTagsRow) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -264,7 +264,7 @@ func Post(post database.Post, tags []database.GetAllTagsRow, q *database.Queries
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = postBase(post, q, false).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = postBase(post, false).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -278,7 +278,7 @@ func Post(post database.Post, tags []database.GetAllTagsRow, q *database.Queries
 	})
 }
 
-func DeletePost(post database.Post, q *database.Queries) templ.Component {
+func DeletePost(post database.Post) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -337,7 +337,7 @@ func DeletePost(post database.Post, q *database.Queries) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = postBase(post, q, false).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = postBase(post, false).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -351,7 +351,7 @@ func DeletePost(post database.Post, q *database.Queries) templ.Component {
 	})
 }
 
-func Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Component, selected int64, q *database.Queries) templ.Component {
+func Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Component, selected int64) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -389,7 +389,7 @@ func Posts(posts []database.Post, tags []database.GetAllTagsRow, nav templ.Compo
 				return templ_7745c5c3_Err
 			}
 			for _, post := range posts {
-				templ_7745c5c3_Err = postBase(post, q, post.CreatedAt == selected).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = postBase(post, post.CreatedAt == selected).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

@@ -48,10 +48,14 @@ func NewQueries(databaseSource string) *Queries {
 		panic(err)
 	}
 	queries := New(db)
+	err = queries.Migrate(ctx)
+	if err != nil {
+		panic(err)
+	}
 	return queries
 }
 
-const queryPosts = `SELECT id, created_at, tags, content, private FROM posts`
+const queryPosts = `SELECT id, created_at, tags, content, html, private FROM posts`
 const countPosts = `SELECT COUNT(*) FROM posts`
 const queryPostsOrder = ` ORDER BY created_at DESC`
 
@@ -110,6 +114,7 @@ func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, p
 			&i.CreatedAt,
 			&i.Tags,
 			&i.Content,
+			&i.Html,
 			&i.Private,
 		); err != nil {
 			return nil, 0, err

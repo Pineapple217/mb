@@ -14,9 +14,9 @@ ORDER BY created_at DESC;
 
 -- name: CreatePost :one
 INSERT INTO posts (
-  created_at, tags, content, private
+  created_at, tags, content, html, private
 ) VALUES (
-  strftime('%s', 'now'), ?, ?, ?
+  strftime('%s', 'now'), ?, ?, ?, ?
 )
 RETURNING *;
 
@@ -24,6 +24,7 @@ RETURNING *;
 UPDATE posts
 set tags = ?,
     content = ?,
+    html = ?,
     private = ?
 WHERE created_at = ?;
 

@@ -129,7 +129,7 @@ func MdToHTML(ctx context.Context, q *database.Queries, md string) string {
 
 	redendererMutex.Lock()
 	defer redendererMutex.Unlock()
-	return string(markdown.Render(doc, renderer))
+	return strings.TrimSpace(string(markdown.Render(doc, renderer)))
 }
 
 func initRender() *html.Renderer {
