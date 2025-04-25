@@ -57,7 +57,7 @@ type Root struct {
 	} `json:"entities"`
 }
 
-const query = `<script\s+id="initial-state"\s+type="text/plain">([^<]+)</script>`
+const query = `<script\s+id="initialState"\s+type="text/plain">([^<]+)</script>`
 
 const SpotifyUrlPrefix = "https://open.spotify.com/track/"
 
