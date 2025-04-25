@@ -274,13 +274,13 @@ figure {
 }
 
 .scc {
-  /* flex: 1; */
   display: flex;
   justify-content: center;
   align-items: center;
   grid-row: 1;
   grid-column: 2;
   align-self: start;
+  padding-top: 1em;
 }
 
 .scw {
@@ -496,6 +496,7 @@ img.max {
 
   .scc {
     align-self: center;
+    padding: 0;
   }
 
   .yti {
