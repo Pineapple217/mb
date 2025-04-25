@@ -33,6 +33,11 @@ type spotifyEmbed struct {
 	cache database.SpotifyCache
 }
 
+type navidromeEmbed struct {
+	ast.Leaf
+	cache database.NavidromeCache
+}
+
 type youtubeEmbed struct {
 	ast.Leaf
 	cache database.YoutubeCache
@@ -50,6 +55,10 @@ func embedRenderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus,
 	// no context removes need for closure and simplifies code
 	if s, ok := node.(*spotifyEmbed); ok {
 		SpotifyEmbed(s.cache).Render(context.Background(), w)
+		return ast.GoToNext, true
+	}
+	if s, ok := node.(*navidromeEmbed); ok {
+		NavidromeEmbed(s.cache).Render(context.Background(), w)
 		return ast.GoToNext, true
 	}
 	if s, ok := node.(*youtubeEmbed); ok {
@@ -85,6 +94,31 @@ func makeParserHook(ctx context.Context, q *database.Queries) parser.BlockFunc {
 				return nil, nil, 0
 			}
 			node := spotifyEmbed{cache: c}
+			return &node, nil, len(d)
+		}
+
+		if config.NavidromePrefix != "" && bytes.HasPrefix(data, []byte(config.NavidromePrefix)) {
+			i := bytes.IndexByte(data, '\n')
+			var d string
+			if i == -1 {
+				d = string(data)
+			} else {
+				d = string(data[:i])
+			}
+			id, _ := strings.CutPrefix(d, config.NavidromePrefix)
+
+			c, err := q.GetNavidromeCache(ctx, id)
+			if errors.Is(err, sql.ErrNoRows) {
+				c, err = embed.NavidromeScrape(ctx, q, id)
+				if err != nil {
+					slog.Error("Failed to scrape navidrome track", "id", id, "err", err)
+					return nil, nil, 0
+				}
+			} else if err != nil {
+				slog.Error("Failed to fetch navidrome track cache", "id", id, "err", err)
+				return nil, nil, 0
+			}
+			node := navidromeEmbed{cache: c}
 			return &node, nil, len(d)
 		}
 

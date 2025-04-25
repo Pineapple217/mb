@@ -9,6 +9,7 @@
   --light-pink: #ff7a7a;
   --border: #594e4e;
   --spotify-green: #1ed760;
+  --navidrome-blue: #0085FF;
 
   color-scheme: dark;
   scrollbar-gutter: stable;
@@ -221,9 +222,19 @@ figure {
   position: relative;
 }
 
+.nd {
+  border-color: var(--navidrome-blue);
+  color: var(--navidrome-blue);
+}
+
+.sf {
+  border-color: var(--spotify-green);
+  color: var(--spotify-green);
+}
+
 .spc {
-  border-top: 1px dotted var(--spotify-green);
-  border-bottom: 1px dotted var(--spotify-green);
+  border-top: 1px dotted;
+  border-bottom: 1px dotted;
   display: grid;
   grid-template-columns: minmax(135px, 25%) auto;
   grid-template-rows: auto auto;
@@ -251,7 +262,6 @@ figure {
 }
 
 .scw {
-  color: var(--spotify-green);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -260,7 +270,6 @@ figure {
 }
 
 .scw a {
-  color: var(--spotify-green);
   max-height: 1em;
 }
 

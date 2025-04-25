@@ -1,22 +1,43 @@
 package view
 
 import "github.com/Pineapple217/mb/pkg/database"
+import "github.com/Pineapple217/mb/pkg/config"
 
 templ SpotifyEmbed(sc database.SpotifyCache) {
-	<figure class="spc">
+	<figure class="spc sf">
 		<div class="sic">
 			<img loading="lazy" src={ sc.CoverArtUrl } alt="Cover Art"/>
 		</div>
 		<div class="scc">
 			<div class="scw">
-				<a href={ templ.URL("https://open.spotify.com/track/" + sc.TrackID) } target="_blank">{ sc.TrackName }</a>
+				<a class="sf" href={ templ.URL("https://open.spotify.com/track/" + sc.TrackID) } target="_blank">{ sc.TrackName }</a>
 				<br/>
-				<a href={ templ.URL("https://open.spotify.com/artist/" + sc.ArtistID) } target="_blank">{ sc.ArtistName }</a>
+				<a class="sf" href={ templ.URL("https://open.spotify.com/artist/" + sc.ArtistID) } target="_blank">{ sc.ArtistName }</a>
 			</div>
 		</div>
 		<div class="sca">
 			<audio controls preload="none" controlsList="noplaybackrate nodownload" volume="0.3">
 				<source src={ sc.AudioPreviewUrl } type="audio/mpeg"/>
+			</audio>
+		</div>
+	</figure>
+}
+
+templ NavidromeEmbed(nc database.NavidromeCache) {
+	<figure class="spc nd">
+		<div class="sic">
+			<img loading="lazy" src={ config.NavidromePrefix + "img/" + nc.TrackID + "?size=200" } alt="Cover Art"/>
+		</div>
+		<div class="scc">
+			<div class="scw">
+				<span>{ nc.TrackName }</span>
+				<br/>
+				<span>{ nc.ArtistName }</span>
+			</div>
+		</div>
+		<div class="sca">
+			<audio controls preload="none" controlsList="noplaybackrate nodownload" volume="0.3">
+				<source src={ config.NavidromePrefix + "s/" + nc.TrackID } type="audio/mpeg"/>
 			</audio>
 		</div>
 	</figure>

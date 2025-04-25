@@ -24,4 +24,10 @@ func CleanCache(q *database.Queries) {
 		slog.Warn("Failed to clean database cache", "type", "spotify", "error", err)
 	}
 	slog.Info("Cleaned cache", "type", "spotify", "count", c)
+
+	c, err = q.RemoveUnusedNavidromeCache(ctx)
+	if err != nil {
+		slog.Warn("Failed to clean database cache", "type", "navidrome", "error", err)
+	}
+	slog.Info("Cleaned cache", "type", "navidrome", "count", c)
 }

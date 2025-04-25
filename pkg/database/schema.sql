@@ -18,6 +18,14 @@ CREATE TABLE IF NOT EXISTS spotify_cache (
   audio_preview_url TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS navidrome_cache (
+  id                INTEGER PRIMARY KEY AUTOINCREMENT,
+  share_id          TEXT NOT NULL,
+  track_id          TEXT NOT NULL,
+  track_name        TEXT NOT NULL,
+  artist_name       TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS youtube_cache (
   id       INTEGER PRIMARY KEY AUTOINCREMENT,
   yt_id    TEXT    NOT NULL,

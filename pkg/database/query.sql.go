@@ -48,6 +48,40 @@ func (q *Queries) CreateMediafile(ctx context.Context, arg CreateMediafileParams
 	return i, err
 }
 
+const createNavidromeCache = `-- name: CreateNavidromeCache :one
+INSERT INTO navidrome_cache (
+  share_id, track_id, track_name, artist_name
+) VALUES (
+  ?, ?, ?, ?
+)
+RETURNING id, share_id, track_id, track_name, artist_name
+`
+
+type CreateNavidromeCacheParams struct {
+	ShareID    string
+	TrackID    string
+	TrackName  string
+	ArtistName string
+}
+
+func (q *Queries) CreateNavidromeCache(ctx context.Context, arg CreateNavidromeCacheParams) (NavidromeCache, error) {
+	row := q.db.QueryRowContext(ctx, createNavidromeCache,
+		arg.ShareID,
+		arg.TrackID,
+		arg.TrackName,
+		arg.ArtistName,
+	)
+	var i NavidromeCache
+	err := row.Scan(
+		&i.ID,
+		&i.ShareID,
+		&i.TrackID,
+		&i.TrackName,
+		&i.ArtistName,
+	)
+	return i, err
+}
+
 const createPost = `-- name: CreatePost :one
 INSERT INTO posts (
   created_at, tags, content, html, private
@@ -264,6 +298,24 @@ func (q *Queries) GetMediafile(ctx context.Context, id int64) (Mediafile, error)
 	return i, err
 }
 
+const getNavidromeCache = `-- name: GetNavidromeCache :one
+SELECT id, share_id, track_id, track_name, artist_name FROM navidrome_cache
+WHERE share_id = ? LIMIT 1
+`
+
+func (q *Queries) GetNavidromeCache(ctx context.Context, shareID string) (NavidromeCache, error) {
+	row := q.db.QueryRowContext(ctx, getNavidromeCache, shareID)
+	var i NavidromeCache
+	err := row.Scan(
+		&i.ID,
+		&i.ShareID,
+		&i.TrackID,
+		&i.TrackName,
+		&i.ArtistName,
+	)
+	return i, err
+}
+
 const getPost = `-- name: GetPost :one
 SELECT id, created_at, tags, content, html, private FROM posts
 WHERE created_at = ? LIMIT 1
@@ -448,6 +500,24 @@ func (q *Queries) ListPublicPosts(ctx context.Context) ([]Post, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const removeUnusedNavidromeCache = `-- name: RemoveUnusedNavidromeCache :execrows
+DELETE FROM navidrome_cache
+WHERE id IN (
+    SELECT navidrome_cache.id
+    FROM navidrome_cache
+    LEFT JOIN posts ON instr(posts.content, navidrome_cache.share_id) > 0
+    WHERE instr(posts.content, navidrome_cache.share_id) IS NULL
+)
+`
+
+func (q *Queries) RemoveUnusedNavidromeCache(ctx context.Context) (int64, error) {
+	result, err := q.db.ExecContext(ctx, removeUnusedNavidromeCache)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
 
 const removeUnusedSpotifyCache = `-- name: RemoveUnusedSpotifyCache :execrows

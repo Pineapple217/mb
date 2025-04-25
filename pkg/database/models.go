@@ -19,6 +19,14 @@ type Mediafile struct {
 	UploadedAt    time.Time
 }
 
+type NavidromeCache struct {
+	ID         int64
+	ShareID    string
+	TrackID    string
+	TrackName  string
+	ArtistName string
+}
+
 type Post struct {
 	ID        int64
 	CreatedAt int64

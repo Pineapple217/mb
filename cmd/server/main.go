@@ -23,7 +23,7 @@ const banner = `
 ·██ ▐███▪▐█ ▀█▪
 ▐█ ▌▐▌▐█·▐█▀▀█▄
 ██ ██▌▐█▌██▄▪▐█
-▀▀  █▪▀▀▀·▀▀▀▀	v0.9.1
+▀▀  █▪▀▀▀·▀▀▀▀	v0.10.0
 Minimal blog with no JavaScript
 https://github.com/Pineapple217/mb
 -----------------------------------------------------------------------------`
@@ -93,9 +93,6 @@ func CreateAllHtml(ctx context.Context, q *database.Queries) error {
 			return err
 		}
 		for _, post := range posts {
-			if post.Html != "ERROR NO HTML" {
-				continue
-			}
 			err = q.UpdatePost(ctx, database.UpdatePostParams{
 				Tags:      post.Tags,
 				Content:   post.Content,

@@ -49,6 +49,18 @@ RETURNING *;
 SELECT * FROM spotify_cache
 WHERE track_id = ? LIMIT 1;
 
+-- name: CreateNavidromeCache :one
+INSERT INTO navidrome_cache (
+  share_id, track_id, track_name, artist_name
+) VALUES (
+  ?, ?, ?, ?
+)
+RETURNING *;
+
+-- name: GetNavidromeCache :one
+SELECT * FROM navidrome_cache
+WHERE share_id = ? LIMIT 1;
+
 -- name: CreateYoutubebCache :one
 INSERT INTO youtube_cache (
   yt_id, thumb, title, author, author_url
@@ -68,6 +80,15 @@ WHERE id IN (
     FROM youtube_cache
     LEFT JOIN posts ON instr(posts.content, youtube_cache.yt_id) > 0
     WHERE instr(posts.content, youtube_cache.yt_id) IS NULL
+);
+
+-- name: RemoveUnusedNavidromeCache :execrows
+DELETE FROM navidrome_cache
+WHERE id IN (
+    SELECT navidrome_cache.id
+    FROM navidrome_cache
+    LEFT JOIN posts ON instr(posts.content, navidrome_cache.share_id) > 0
+    WHERE instr(posts.content, navidrome_cache.share_id) IS NULL
 );
 
 -- name: RemoveUnusedSpotifyCache :execrows

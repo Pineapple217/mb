@@ -31,6 +31,7 @@ var (
 	HomepageMessage string
 	Host            string
 	Debug           bool
+	NavidromePrefix string
 )
 
 func Load() {
@@ -55,6 +56,7 @@ func Load() {
 	initMessage()
 	initHost()
 	initDebug()
+	initNavidromePrefix()
 }
 
 func initTimezone() {
@@ -131,4 +133,11 @@ func initDebug() {
 		return
 	}
 	Debug = debug
+}
+
+func initNavidromePrefix() {
+	prefix, isSet := os.LookupEnv("MB_NAVIDROME_PREFIX")
+	if isSet {
+		NavidromePrefix = prefix
+	}
 }
