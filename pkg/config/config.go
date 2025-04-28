@@ -11,133 +11,68 @@ import (
 )
 
 const (
-	defaultLogo    = " • ▌ ▄ ·. ▄▄▄▄· \n ·██ ▐███▪▐█ ▀█▪\n ▐█ ▌▐▌▐█·▐█▀▀█▄\n ██ ██▌▐█▌██▄▪▐█\n ▀▀  █▪▀▀▀·▀▀▀▀ "
-	defaultLink    = "https://mb.dev"
-	defaultRights  = "mb.dev"
-	defaultMessage = "Created without any JS."
-	defaultHost    = "http://localhost:3000"
-	defaultDebug   = false
-
 	DataDir   = "./data"
 	UploadDir = DataDir + "/uploads"
-	BackupDir = DataDir + `/backups`
+	BackupDir = DataDir + "/backups"
 )
 
 var (
 	OutputTimezone  *time.Location
-	HomepageLogo    string
-	HomepageLink    string
-	HomepageRights  string
-	HomepageMessage string
-	Host            string
-	Debug           bool
+	HomepageLogo    = " • ▌ ▄ ·. ▄▄▄▄· \n ·██ ▐███▪▐█ ▀█▪\n ▐█ ▌▐▌▐█·▐█▀▀█▄\n ██ ██▌▐█▌██▄▪▐█\n ▀▀  █▪▀▀▀·▀▀▀▀ "
+	HomepageLink    = "https://mb.dev"
+	HomepageRights  = "mv.dev"
+	HomepageMessage = "Created without any JS."
+	Host            = "http://localhost:3000"
+	Debug           = false
 	NavidromePrefix string
 )
 
 func Load() {
 	slog.Info("Loading configs")
-	err := godotenv.Load()
-	if err != nil {
+	if err := godotenv.Load(); err != nil {
 		slog.Info("No .env file found")
 	}
-	password, isSet := os.LookupEnv("MB_AUTH_PASSWORD")
-	if !isSet {
-		slog.Info("AUHT_PASSWORD is not set. Using random password")
-		slog.Info("Random password generated", "password", auth.SecretPassword)
-	} else {
-		slog.Info("Auth password succesfully set")
+
+	setAuthPassword()
+	setEnvVar("MB_LOGO", &HomepageLogo)
+	setEnvVar("MB_LINK", &HomepageLink)
+	setEnvVar("MB_RIGHTS", &HomepageRights)
+	setEnvVar("MB_MESSAGE", &HomepageMessage)
+	setEnvVar("MB_HOST", &Host)
+	setDebug()
+	setTimezone()
+	setEnvVar("MB_NAVIDROME_PREFIX", &NavidromePrefix)
+}
+
+func setAuthPassword() {
+	if password, ok := os.LookupEnv("MB_AUTH_PASSWORD"); ok {
 		auth.SecretPassword = password
-
+		slog.Info("Auth password successfully set")
+	} else {
+		slog.Info("AUTH_PASSWORD is not set. Using random password", "password", auth.SecretPassword)
 	}
-	initTimezone()
-	initLogo()
-	initLink()
-	initRights()
-	initMessage()
-	initHost()
-	initDebug()
-	initNavidromePrefix()
 }
 
-func initTimezone() {
-	// MAYBE: get timezone from user
-	locStr, isSet := os.LookupEnv("MB_TIMEZONE")
-	if !isSet {
-		OutputTimezone = time.Now().Location()
-		return
+func setEnvVar(key string, target *string) {
+	if val, ok := os.LookupEnv(key); ok {
+		*target = val
 	}
-	envLoc, err := time.LoadLocation(locStr)
-	if err != nil {
-		OutputTimezone = time.Now().Location()
-		return
-	}
-	OutputTimezone = envLoc
-
 }
 
-func initLogo() {
-	logo, isSet := os.LookupEnv("MB_LOGO")
-	if !isSet {
-		HomepageLogo = defaultLogo
-		return
+func setDebug() {
+	if val, ok := os.LookupEnv("MB_DEBUG"); ok {
+		if debug, err := strconv.ParseBool(val); err == nil {
+			Debug = debug
+		}
 	}
-	HomepageLogo = logo
 }
 
-func initLink() {
-	link, isSet := os.LookupEnv("MB_LINK")
-	if !isSet {
-		HomepageLink = defaultLink
-		return
+func setTimezone() {
+	if locStr, ok := os.LookupEnv("MB_TIMEZONE"); ok {
+		if loc, err := time.LoadLocation(locStr); err == nil {
+			OutputTimezone = loc
+			return
+		}
 	}
-	HomepageLink = link
-}
-
-func initRights() {
-	rights, isSet := os.LookupEnv("MB_RIGHTS")
-	if !isSet {
-		HomepageRights = defaultRights
-		return
-	}
-	HomepageRights = rights
-}
-
-func initMessage() {
-	message, isSet := os.LookupEnv("MB_MESSAGE")
-	if !isSet {
-		HomepageMessage = defaultMessage
-		return
-	}
-	HomepageMessage = message
-}
-
-func initHost() {
-	host, isSet := os.LookupEnv("MB_HOST")
-	if !isSet {
-		Host = defaultHost
-		return
-	}
-	Host = host
-}
-
-func initDebug() {
-	debugStr, isSet := os.LookupEnv("MB_DEBUG")
-	var debug bool
-	if !isSet {
-		Debug = defaultDebug
-		return
-	}
-	debug, err := strconv.ParseBool(debugStr)
-	if err != nil {
-		Debug = defaultDebug
-		return
-	}
-	Debug = debug
-}
-
-func initNavidromePrefix() {
-	prefix, isSet := os.LookupEnv("MB_NAVIDROME_PREFIX")
-	if isSet {
-		NavidromePrefix = prefix
-	}
+	OutputTimezone = time.Now().Location()
 }
