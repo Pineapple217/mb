@@ -9,7 +9,7 @@
   --light-pink: #ff7a7a;
   --border: #594e4e;
   --spotify-green: #1ed760;
-  --navidrome-blue: #0085FF;
+  --navidrome-blue: #0085ff;
 
   color-scheme: dark;
   scrollbar-gutter: stable;
@@ -45,6 +45,7 @@ body.auth {
 }
 
 h1 {
+  margin-block: 0.67em;
   font-size: 2em;
 }
 

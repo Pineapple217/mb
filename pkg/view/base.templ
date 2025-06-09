@@ -31,6 +31,14 @@ templ boiler(desc string) {
 			<link rel="stylesheet" href={ s.StaticMap["/static/css/main.css"] }/>
 			<title>MB</title>
 		</head>
+		// temp lighthouse fix
+		// https://github.com/GoogleChrome/lighthouse/issues/16404
+		<style>
+			:where(h1) {
+				margin-block: 0.67em;
+				font-size: 2em;
+			}
+		</style>
 		<a href={ templ.URL("/auth?r=" + url.QueryEscape(ct.GetPath(ctx))) } accesskey="a" aria-hidden="true" tabindex="-1"></a>
 		<a href="/media" accesskey="m" aria-hidden="true" tabindex="-1"></a>
 		<a href="/backup" accesskey="b" aria-hidden="true" tabindex="-1"></a>
