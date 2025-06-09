@@ -1,12 +1,10 @@
 CREATE TABLE IF NOT EXISTS posts (
-  id         INTEGER PRIMARY KEY AUTOINCREMENT,
-  created_at INTEGER NOT NULL,
+  created_at INTEGER PRIMARY KEY,
   tags       TEXT,
   content    TEXT    NOT NULL,
   html       TEXT    NOT NULL,
   private    INTEGER NOT NULL DEFAULT 0
 );
-
 
 CREATE TABLE IF NOT EXISTS spotify_cache (
   id                INTEGER PRIMARY KEY AUTOINCREMENT,

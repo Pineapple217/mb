@@ -50,14 +50,40 @@ func (q *Queries) Migrate(ctx context.Context) error {
 		return err
 	}
 	htmlExits := false
+	idExist := false
 	for _, ti := range tis {
 		if ti.Name == "html" {
 			htmlExits = true
+		}
+		if ti.Name == "id" {
+			idExist = true
 		}
 	}
 	if !htmlExits { // Remove me for 1.0
 		slog.Info("HTML column not found, adding column")
 		_, err = q.db.ExecContext(ctx, "ALTER TABLE posts ADD COLUMN html TEXT NOT NULL DEFAULT 'ERROR NO HTML';")
+		if err != nil {
+			return err
+		}
+	}
+	if idExist { // Remove me for 1.0
+		slog.Info("legacy id column still exists, starting migration")
+		_, err = q.db.ExecContext(ctx, "ALTER TABLE posts RENAME TO posts_old;")
+		if err != nil {
+			return err
+		}
+		_, err = q.db.ExecContext(ctx, ddl)
+		if err != nil {
+			return err
+		}
+		_, err = q.db.ExecContext(ctx, `
+			INSERT INTO posts (created_at, tags, content, html, private)
+			SELECT created_at, tags, content, html, private FROM posts_old;	
+		`)
+		if err != nil {
+			return err
+		}
+		_, err = q.db.ExecContext(ctx, "DROP TABLE posts_old;")
 		if err != nil {
 			return err
 		}

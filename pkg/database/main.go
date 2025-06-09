@@ -55,7 +55,7 @@ func NewQueries(databaseSource string) *Queries {
 	return queries
 }
 
-const queryPosts = `SELECT id, created_at, tags, content, html, private FROM posts`
+const queryPosts = `SELECT created_at, tags, content, html, private FROM posts`
 const countPosts = `SELECT COUNT(*) FROM posts`
 const queryPostsOrder = ` ORDER BY created_at DESC`
 
@@ -110,7 +110,6 @@ func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, p
 	for rows.Next() {
 		var i Post
 		if err := rows.Scan(
-			&i.ID,
 			&i.CreatedAt,
 			&i.Tags,
 			&i.Content,

@@ -28,7 +28,6 @@ type NavidromeCache struct {
 }
 
 type Post struct {
-	ID        int64
 	CreatedAt int64
 	Tags      sql.NullString
 	Content   string

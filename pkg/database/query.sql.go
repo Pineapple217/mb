@@ -88,7 +88,7 @@ INSERT INTO posts (
 ) VALUES (
   strftime('%s', 'now'), ?, ?, ?, ?
 )
-RETURNING id, created_at, tags, content, html, private
+RETURNING created_at, tags, content, html, private
 `
 
 type CreatePostParams struct {
@@ -107,7 +107,6 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 	)
 	var i Post
 	err := row.Scan(
-		&i.ID,
 		&i.CreatedAt,
 		&i.Tags,
 		&i.Content,
@@ -317,7 +316,7 @@ func (q *Queries) GetNavidromeCache(ctx context.Context, shareID string) (Navidr
 }
 
 const getPost = `-- name: GetPost :one
-SELECT id, created_at, tags, content, html, private FROM posts
+SELECT created_at, tags, content, html, private FROM posts
 WHERE created_at = ? LIMIT 1
 `
 
@@ -325,7 +324,6 @@ func (q *Queries) GetPost(ctx context.Context, createdAt int64) (Post, error) {
 	row := q.db.QueryRowContext(ctx, getPost, createdAt)
 	var i Post
 	err := row.Scan(
-		&i.ID,
 		&i.CreatedAt,
 		&i.Tags,
 		&i.Content,
@@ -349,7 +347,7 @@ func (q *Queries) GetPostCount(ctx context.Context, private int64) (int64, error
 }
 
 const getPostLatest = `-- name: GetPostLatest :one
-SELECT id, created_at, tags, content, html, private FROM posts
+SELECT created_at, tags, content, html, private FROM posts
 WHERE private = 0
 ORDER BY created_at DESC LIMIT 1
 `
@@ -358,7 +356,6 @@ func (q *Queries) GetPostLatest(ctx context.Context) (Post, error) {
 	row := q.db.QueryRowContext(ctx, getPostLatest)
 	var i Post
 	err := row.Scan(
-		&i.ID,
 		&i.CreatedAt,
 		&i.Tags,
 		&i.Content,
@@ -467,7 +464,7 @@ func (q *Queries) ListMediafiles(ctx context.Context) ([]Mediafile, error) {
 }
 
 const listPublicPosts = `-- name: ListPublicPosts :many
-SELECT id, created_at, tags, content, html, private FROM posts
+SELECT created_at, tags, content, html, private FROM posts
 WHERE private = 0
 ORDER BY created_at DESC
 `
@@ -482,7 +479,6 @@ func (q *Queries) ListPublicPosts(ctx context.Context) ([]Post, error) {
 	for rows.Next() {
 		var i Post
 		if err := rows.Scan(
-			&i.ID,
 			&i.CreatedAt,
 			&i.Tags,
 			&i.Content,
