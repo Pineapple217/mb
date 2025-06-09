@@ -1,0 +1,43 @@
+version: "3"
+
+vars:
+  OUTPUT_DIR: ./temp
+  DOCKER_TAG: latest
+  GIT_COMMIT:
+    sh: git log -1 --format=%h
+  BINARY_NAME:
+    sh: |
+      if [ "{{OS}}" = "windows" ]; then
+        echo "main.exe"
+      else
+        echo "main"
+      fi
+
+tasks:
+  codegen:
+    sources:
+      - ./pkg/view/*.templ
+      - ./pkg/database/*.sql
+    cmds:
+      - templ generate
+      - sqlc generate
+
+  build:
+    deps: [codegen]
+    cmds:
+      - go build -o {{.OUTPUT_DIR}}/{{.BINARY_NAME}} -tags sqlite_math_functions ./cmd/server/main.go
+
+  run:
+    deps: [build]
+    cmds:
+      - "{{.OUTPUT_DIR}}/{{.BINARY_NAME}} run"
+
+  docker-build:
+    deps: [codegen]
+    cmds:
+      - docker build -t pineapple217/mb:{{.DOCKER_TAG}} --build-arg GIT_COMMIT={{.GIT_COMMIT}} .
+
+  docker-push:
+    deps: [docker-build]
+    cmds:
+      - docker push pineapple217/mb:{{.DOCKER_TAG}}
