@@ -106,6 +106,9 @@ templ search(tags []database.GetAllTagsRow) {
 // }
 templ EditPost(post database.Post) {
 	@Base("", NullTags{Valid: false}) {
+		<nav>
+			<div><a href={ templ.URL("/?p=" + strconv.FormatInt(post.CreatedAt, 10) + "##") }>← Back</a></div>
+		</nav>
 		<br/>
 		<form action={ templ.URL("/post/" + strconv.FormatInt(post.CreatedAt, 10) + "/edit") } method="POST">
 			<div>
@@ -115,8 +118,10 @@ templ EditPost(post database.Post) {
 				// TODO: checkbox is not selectable
 				<input type="checkbox" name="private" id="private-e" tabindex="3" checked?={ post.Private > 0 }/>
 				<label for="private-e">private</label>
-				<input type="submit" id="submit_e" tabindex="4"/>
-				<label for="submit_e" class="r">[ save ]</label>
+				<input type="submit" id="submit_e_p" name="action" value="post" tabindex="5" accesskey="p"/>
+				<label for="submit_e_p" class="r">[ post ]</label>
+				<input type="submit" id="submit_e_s" name="action" value="safe" tabindex="4" accesskey="s"/>
+				<label for="submit_e_s" class="r">[ save ]</label>
 			</div>
 			<br/>
 			<br/>

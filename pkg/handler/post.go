@@ -121,6 +121,9 @@ func (h *Handler) EditPost(c echo.Context) error {
 		return nil
 	}
 
+	if c.FormValue("action") == "safe" {
+		return c.Redirect(http.StatusSeeOther, "/post/"+xidStr+"/edit")
+	}
 	return c.Redirect(http.StatusSeeOther, "/?p="+xidStr+"##")
 }
 
