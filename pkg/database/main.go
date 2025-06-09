@@ -145,3 +145,16 @@ func (q *Queries) Backup(ctx context.Context) (string, error) {
 	_, err := q.db.ExecContext(ctx, fmt.Sprintf(queryBackup, file))
 	return file, err
 }
+
+func CreateDataDir() {
+	if _, err := os.Stat(config.DataDir); os.IsNotExist(err) {
+		err := os.Mkdir(config.DataDir, 0755)
+		if err != nil {
+			slog.Error("Failed to create directory",
+				"dir", config.DataDir,
+				"error", err,
+			)
+			panic(err)
+		}
+	}
+}

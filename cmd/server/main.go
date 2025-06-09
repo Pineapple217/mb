@@ -23,7 +23,7 @@ const banner = `
 ·██ ▐███▪▐█ ▀█▪
 ▐█ ▌▐▌▐█·▐█▀▀█▄
 ██ ██▌▐█▌██▄▪▐█
-▀▀  █▪▀▀▀·▀▀▀▀	v0.12.0
+▀▀  █▪▀▀▀·▀▀▀▀	v0.12.1
 Minimal blog with no JavaScript
 https://github.com/Pineapple217/mb
 -----------------------------------------------------------------------------`
@@ -33,7 +33,7 @@ func main() {
 	fmt.Println(banner)
 	os.Stdout.Sync()
 
-	CreateDataDir()
+	database.CreateDataDir()
 	media.CreateUploadDir()
 
 	config.Load()
@@ -41,7 +41,7 @@ func main() {
 	rr := static.HashPublicFS()
 
 	q := database.NewQueries("file:" + config.DataDir + "/database.db?_journal_mode=WAL")
-	err := CreateAllHtml(context.Background(), q)
+	err := view.CreateAllHtml(context.Background(), q)
 	if err != nil {
 		panic(err)
 	}
@@ -66,44 +66,4 @@ func main() {
 
 	s.Stop()
 	server.Stop()
-}
-
-func CreateDataDir() {
-	if _, err := os.Stat(config.DataDir); os.IsNotExist(err) {
-		err := os.Mkdir(config.DataDir, 0755)
-		if err != nil {
-			slog.Error("Failed to create directory",
-				"dir", config.DataDir,
-				"error", err,
-			)
-		}
-	}
-}
-
-// Remove me for 1.0
-func CreateAllHtml(ctx context.Context, q *database.Queries) error {
-	slog.Info("Generating html")
-	c, err := q.GetPostCount(ctx, 1)
-	if err != nil {
-		return err
-	}
-	for i := range (c + int64(database.PostsPerPage) - 1) / int64(database.PostsPerPage) {
-		posts, _, err := q.QueryPost(ctx, nil, "", 1, int(i))
-		if err != nil {
-			return err
-		}
-		for _, post := range posts {
-			err = q.UpdatePost(ctx, database.UpdatePostParams{
-				Tags:      post.Tags,
-				Content:   post.Content,
-				Html:      view.MdToHTML(ctx, q, post.Content),
-				Private:   post.Private,
-				CreatedAt: post.CreatedAt,
-			})
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return err
 }

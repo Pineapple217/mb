@@ -166,6 +166,33 @@ func MdToHTML(ctx context.Context, q *database.Queries, md string) string {
 	return strings.TrimSpace(string(markdown.Render(doc, renderer)))
 }
 
+func CreateAllHtml(ctx context.Context, q *database.Queries) error {
+	slog.Info("Generating html")
+	c, err := q.GetPostCount(ctx, 1)
+	if err != nil {
+		return err
+	}
+	for i := range (c + int64(database.PostsPerPage) - 1) / int64(database.PostsPerPage) {
+		posts, _, err := q.QueryPost(ctx, nil, "", 1, int(i))
+		if err != nil {
+			return err
+		}
+		for _, post := range posts {
+			err = q.UpdatePost(ctx, database.UpdatePostParams{
+				Tags:      post.Tags,
+				Content:   post.Content,
+				Html:      MdToHTML(ctx, q, post.Content),
+				Private:   post.Private,
+				CreatedAt: post.CreatedAt,
+			})
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return err
+}
+
 func initRender() *html.Renderer {
 	htmlFlags := html.CommonFlags | html.HrefTargetBlank
 	opts := html.RendererOptions{
