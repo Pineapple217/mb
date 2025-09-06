@@ -2,7 +2,7 @@ ARG GO_VERSION=1.23
 FROM golang:${GO_VERSION} AS build
 WORKDIR /src
 
-ENV CGO_ENABLED=1
+ENV CGO_ENABLED=0
 
 RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,source=go.sum,target=go.sum \
@@ -11,31 +11,19 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
 
 RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,target=. \
-    go build -ldflags='-s -w -extldflags "-static"' -o /bin/server -tags sqlite_math_functions ./cmd/server
+    go build -ldflags='-s -w -extldflags "-static"' -trimpath -o /bin/server ./cmd/server
     # static linking is necessary because of CGO dependency
     # -s -w removes debug info for smaller bin
 
-FROM alpine:latest AS final
+FROM scratch AS final
 
 ARG GIT_COMMIT=unspecified
 LABEL org.opencontainers.image.version=$GIT_COMMIT
 LABEL org.opencontainers.image.source=https://github.com/Pineapple217/mb
 
-# Removed user because of file permisions
-# ARG UID=10001
-# RUN adduser \
-#     --disabled-password \
-#     --gecos "" \
-#     --home "/nonexistent" \
-#     --shell "/sbin/nologin" \
-#     --no-create-home \
-#     --uid "${UID}" \
-#     appuser
-# USER appuser
-
-WORKDIR /app
-COPY --from=build /bin/server /app/server
+COPY --from=alpine:3.19 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=build /bin/server /server
 
 EXPOSE 3000
 
-CMD [ "/app/server", "-listen", "0.0.0.0" ]
+CMD [ "/server", "-listen", "0.0.0.0" ]
