@@ -59,4 +59,6 @@ func (server *Server) RegisterRoutes(hdlr *handler.Handler) {
 	a.POST("/media", hdlr.MediaUpload)
 
 	e.Static("/m", config.UploadDir)
+
+	e.GET("/*", handler.NotFound)
 }
