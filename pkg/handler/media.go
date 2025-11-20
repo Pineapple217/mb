@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -30,8 +32,11 @@ func (h *Handler) Mediafile(c echo.Context) error {
 	}
 
 	mediafile, err := h.Q.GetMediafile(c.Request().Context(), id)
+	if errors.Is(err, sql.ErrNoRows) {
+		return echo.NotFoundHandler(c)
+	}
 	if err != nil {
-		fmt.Println(err.Error())
+		slog.Error("failed to fetch mediafile", "id", idStr, "err", err)
 		return err
 	}
 	return render(c, view.Mediafile(mediafile))
