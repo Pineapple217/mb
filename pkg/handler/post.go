@@ -189,6 +189,7 @@ func (h *Handler) Posts(c echo.Context) error {
 			"",
 			private,
 			int(page),
+			false,
 		)
 		if err != nil {
 			return err
@@ -215,12 +216,20 @@ func (h *Handler) Posts(c echo.Context) error {
 		if err != nil || page < 0 {
 			page = 0
 		}
+		onlyPrivate := false
+		if auth {
+			onlyPrivateStr := c.QueryParam("private")
+			if len(onlyPrivateStr) > 0 {
+				onlyPrivate = true
+			}
+		}
 		posts, postCount, err := h.Q.QueryPost(
 			c.Request().Context(),
 			queryTags,
 			c.QueryParam("search"),
 			private,
 			page,
+			onlyPrivate,
 		)
 		if err != nil {
 			return err

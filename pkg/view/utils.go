@@ -173,7 +173,7 @@ func CreateAllHtml(ctx context.Context, q *database.Queries) error {
 		return err
 	}
 	for i := range (c + int64(database.PostsPerPage) - 1) / int64(database.PostsPerPage) {
-		posts, _, err := q.QueryPost(ctx, nil, "", 1, int(i))
+		posts, _, err := q.QueryPost(ctx, nil, "", 1, int(i), false)
 		if err != nil {
 			return err
 		}

@@ -42,6 +42,7 @@ templ boiler(desc string) {
 		<a href={ templ.URL("/auth?r=" + url.QueryEscape(ct.GetPath(ctx))) } accesskey="a" aria-hidden="true" tabindex="-1"></a>
 		<a href="/media" accesskey="m" aria-hidden="true" tabindex="-1"></a>
 		<a href="/backup" accesskey="b" aria-hidden="true" tabindex="-1"></a>
+		<a href="/?private=x" accesskey="p" aria-hidden="true" tabindex="-1"></a>
 		{ children... }
 	</html>
 }

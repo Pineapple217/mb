@@ -60,7 +60,7 @@ const queryPosts = `SELECT created_at, tags, content, html, private FROM posts`
 const countPosts = `SELECT COUNT(*) FROM posts`
 const queryPostsOrder = ` ORDER BY created_at DESC`
 
-func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, private int, page int) ([]Post, int, error) {
+func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, private int, page int, onlyPrivate bool) ([]Post, int, error) {
 	var filter strings.Builder
 	firstWhere := false
 	if search != "" {
@@ -88,7 +88,7 @@ func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, p
 		}
 	}
 
-	if private == 0 {
+	if private == 0 && !onlyPrivate {
 		if firstWhere {
 			filter.WriteString(" and (")
 		} else {
@@ -96,6 +96,14 @@ func (q *Queries) QueryPost(ctx context.Context, tags []string, search string, p
 			firstWhere = true
 		}
 		filter.WriteString("private = 0)")
+	} else if onlyPrivate {
+		if firstWhere {
+			filter.WriteString(" and (")
+		} else {
+			filter.WriteString(" where (")
+			firstWhere = true
+		}
+		filter.WriteString("private > 0)")
 	}
 
 	limit := fmt.Sprintf(" limit %d offset %d", PostsPerPage, PostsPerPage*page)
