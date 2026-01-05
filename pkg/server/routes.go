@@ -49,7 +49,7 @@ func (server *Server) RegisterRoutes(hdlr *handler.Handler) {
 	a.POST("/post", hdlr.CreatePost)
 	e.GET("/", hdlr.Posts)
 
-	e.GET("/media/t/:name", hdlr.Thumbnail)
+	a.GET("/media/t/:name", hdlr.Thumbnail)
 	e.GET("/media/:id", hdlr.Mediafile)
 	a.GET("/media/:id/edit", hdlr.MediaEditForm)
 	a.POST("/media/:id/edit", hdlr.MediaEdit)

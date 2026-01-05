@@ -2,6 +2,7 @@ package server
 
 import (
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/Pineapple217/mb/pkg/database"
@@ -33,6 +34,9 @@ func (s *Server) ApplyMiddleware(q *database.Queries, reRoutes map[string]string
 	s.e.Use(middleware.Path)
 
 	s.e.Use(echoMw.RateLimiterWithConfig(echoMw.RateLimiterConfig{
+		Skipper: func(c echo.Context) bool {
+			return strings.HasPrefix(c.Path(), "/media/t/")
+		},
 		Store: echoMw.NewRateLimiterMemoryStoreWithConfig(
 			echoMw.RateLimiterMemoryStoreConfig{Rate: 10, Burst: 30, ExpiresIn: 3 * time.Minute},
 		),
