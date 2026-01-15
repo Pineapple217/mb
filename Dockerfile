@@ -15,6 +15,9 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     # static linking is necessary because of CGO dependency
     # -s -w removes debug info for smaller bin
 
+FROM alpine:3.19 AS tzdata
+RUN apk add --no-cache tzdata
+
 FROM scratch AS final
 
 ARG GIT_COMMIT=unspecified
@@ -22,6 +25,7 @@ LABEL org.opencontainers.image.version=$GIT_COMMIT
 LABEL org.opencontainers.image.source=https://github.com/Pineapple217/mb
 
 COPY --from=alpine:3.19 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=tzdata /usr/share/zoneinfo /usr/share/zoneinfo
 COPY --from=build /bin/server /server
 
 EXPOSE 3000
